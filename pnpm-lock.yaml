@@ -84,6 +84,9 @@ importers:
       '@my-better-t-app/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@my-better-t-app/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@my-better-t-app/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -391,6 +394,25 @@ importers:
       dotenv:
         specifier: 'catalog:'
         version: 17.2.3
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+      zod:
+        specifier: 'catalog:'
+        version: 4.1.12
+    devDependencies:
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.15.12(typescript@5.9.3)
+
+  packages/contracts:
+    dependencies:
+      '@orpc/contract':
+        specifier: 'catalog:'
+        version: 1.11.3
+      '@orpc/zod':
+        specifier: 'catalog:'
+        version: 1.10.2(@orpc/contract@1.11.3)(@orpc/server@1.10.2(ws@8.18.3))(ws@8.18.3)(zod@4.1.12)
       typescript:
         specifier: ^5
         version: 5.9.3
