@@ -4,9 +4,8 @@
 import { oc } from "@orpc/contract";
 import { todo } from "./todo.contract";
 
-
 export const contract = oc.router({
-	todo,
-})
+  todo,
+});
 
 export type Contract = typeof contract;

@@ -1,5 +1,9 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import type prismaClient from '@my-better-t-app/db';
+import type prismaClient from "@my-better-t-app/db";
+import {
+  Injectable,
+  type OnModuleDestroy,
+  type OnModuleInit,
+} from "@nestjs/common";
 
 type PrismaClient = typeof prismaClient;
 
@@ -9,7 +13,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
 
   private async loadClient() {
     if (!this.prismaClient) {
-      const module = await import('@my-better-t-app/db');
+      const module = await import("@my-better-t-app/db");
       this.prismaClient = module.default;
     }
     return this.prismaClient;
@@ -17,7 +21,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
 
   get prisma(): PrismaClient {
     if (!this.prismaClient) {
-      throw new Error('Prisma client is not initialized yet');
+      throw new Error("Prisma client is not initialized yet");
     }
     return this.prismaClient;
   }
@@ -33,4 +37,3 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     }
   }
 }
-

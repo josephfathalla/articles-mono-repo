@@ -22,8 +22,20 @@
       "!**/.source"
     ]
   },
-  "extends": [
-    "ultracite/core",
-    "ultracite/react"
-  ]
+  "overrides": [
+    {
+      "includes": [
+        "apps/backend/src/**/*.service.ts",
+        "apps/backend/src/**/*.controller.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useImportType": "off"
+          }
+        }
+      }
+    }
+  ],
+  "extends": ["ultracite/core", "ultracite/react"]
 }

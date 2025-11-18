@@ -4,7 +4,7 @@
 // Example: Define contract schemas using @orpc/contract
 // import { contract } from "@orpc/contract";
 // import { z } from "zod";
-// 
+//
 // export const todoContract = contract({
 //   getAll: {
 //     input: z.void(),
@@ -21,4 +21,3 @@
 
 // Export an empty object to make this a valid module
 export {};
-

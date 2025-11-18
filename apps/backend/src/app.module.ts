@@ -1,18 +1,19 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { Module } from "@nestjs/common";
+import { REQUEST } from "@nestjs/core";
+import { ORPCModule, onError } from "@orpc/nest";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
 // import { AuthModule } from '@thallesp/nestjs-better-auth';
 // import { auth } from '@my-better-t-app/auth';
-import { TodoModule } from './todo/todo.module';
-import { onError, ORPCModule } from '@orpc/nest';
-import { REQUEST } from '@nestjs/core';
+import { TodoModule } from "./todo/todo.module";
 @Module({
   imports: [
-    ORPCModule.forRootAsync({ // or .forRoot
+    ORPCModule.forRootAsync({
+      // or .forRoot
       useFactory: (request: Request) => ({
         interceptors: [
           onError((error) => {
-            console.error(error)
+            console.error(error);
           }),
         ],
         context: { request }, // oRPC context, accessible from middlewares, etc.
@@ -20,8 +21,8 @@ import { REQUEST } from '@nestjs/core';
       }),
       inject: [REQUEST],
     }),
-      TodoModule
-    ],
+    TodoModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
