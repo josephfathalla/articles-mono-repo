@@ -3,6 +3,7 @@ import { contract } from "@my-better-t-app/contracts";
 import { NestFactory } from "@nestjs/core";
 import { OpenAPIHandler } from "@orpc/openapi/node";
 import { OpenAPIReferencePlugin } from "@orpc/openapi/plugins";
+import type { AnyRouter } from "@orpc/server";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import cors from "cors";
 import { AppModule } from "./app.module";
@@ -21,27 +22,34 @@ async function bootstrap() {
 
   const httpAdapter = app.getHttpAdapter();
   const express = httpAdapter.getInstance();
-  
+
   // API Reference handler only (RPC is handled by ORPCModule)
-  const referenceHandler = new OpenAPIHandler(contract as any, {
-    plugins: [
-      new OpenAPIReferencePlugin({
-        schemaConverters: [new ZodToJsonSchemaConverter()],
-        docsPath: "/",
-        specGenerateOptions: ({ request }) => ({
-          info: { title: "My Better T API", version: "1.0.0" },
-          servers: [{ url: `${request.url.origin}/` }], // real API base
+  // Contract routers use ContractProcedure while OpenAPIHandler expects Procedure types
+  // This cast is safe as OpenAPIHandler can generate docs from contract definitions
+  const referenceHandler = new OpenAPIHandler(
+    contract as unknown as AnyRouter,
+    {
+      plugins: [
+        new OpenAPIReferencePlugin({
+          schemaConverters: [new ZodToJsonSchemaConverter()],
+          docsPath: "/",
+          specGenerateOptions: ({ request }) => ({
+            info: { title: "My Better T API", version: "1.0.0" },
+            servers: [{ url: `${request.url.origin}/` }], // real API base
+          }),
         }),
-      }),
-    ],
-  });
+      ],
+    }
+  );
 
   express.use(async (req, res, next) => {
     const apiResult = await referenceHandler.handle(req, res, {
       prefix: "/api-reference",
       context: { request: req },
     });
-    if (apiResult.matched) return;
+    if (apiResult.matched) {
+      return;
+    }
 
     next();
   });

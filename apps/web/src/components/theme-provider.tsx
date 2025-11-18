@@ -8,4 +8,5 @@ export function ThemeProvider({
   return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
 }
 
+//biome-ignore lint/performance/noBarrelFile: No need to export the client
 export { useTheme } from "next-themes";

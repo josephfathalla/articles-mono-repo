@@ -19,7 +19,9 @@
       "!**/.alchemy",
       "!**/.svelte-kit",
       "!**/wrangler.jsonc",
-      "!**/.source"
+      "!**/.source",
+      "!**/apps/server",
+      "!**/packages/api"
     ]
   },
   "overrides": [
@@ -34,6 +36,22 @@
             "useImportType": "off"
           }
         }
+      }
+    },
+    {
+      "includes": ["**/*.spec.ts", "**/*.test.ts", "**/test/**/*.ts"],
+      "javascript": {
+        "globals": [
+          "jest",
+          "describe",
+          "it",
+          "expect",
+          "beforeEach",
+          "afterEach",
+          "beforeAll",
+          "afterAll",
+          "test"
+        ]
       }
     }
   ],

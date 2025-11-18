@@ -1,5 +1,5 @@
 import { oc } from "@orpc/contract";
-import * as z from "zod";
+import { z } from "zod";
 
 export const TodoSchema = z.object({
   id: z.number().int().min(1),
@@ -10,14 +10,14 @@ export const TodoSchema = z.object({
 export const listTodoContract = oc
   .route({
     method: "GET",
-    path:"/"
+    path: "/",
   })
   .output(z.array(TodoSchema));
 
 export const createTodoContract = oc
   .route({
     method: "POST",
-    path:"/"
+    path: "/",
   })
   .input(TodoSchema.pick({ text: true }))
   .output(TodoSchema);
@@ -25,7 +25,7 @@ export const createTodoContract = oc
 export const toggleTodoContract = oc
   .route({
     method: "PUT",
-    path:"/"
+    path: "/",
   })
   .input(TodoSchema.pick({ id: true, completed: true }))
   .output(TodoSchema);
@@ -33,11 +33,10 @@ export const toggleTodoContract = oc
 export const deleteTodoContract = oc
   .route({
     method: "DELETE",
-    path:"/"
+    path: "/",
   })
   .input(TodoSchema.pick({ id: true }))
   .output(TodoSchema);
-
 
 export const todo = oc.prefix("/todos").router({
   list: listTodoContract,

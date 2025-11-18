@@ -4,7 +4,11 @@ import { AppService } from "./app.service";
 @Controller()
 export class AppController {
   /* c8 ignore next */
-  constructor(private readonly appService: AppService) {}
+  private readonly appService: AppService;
+
+  constructor(appService: AppService) {
+    this.appService = appService;
+  }
 
   @Get()
   getHello(): string {

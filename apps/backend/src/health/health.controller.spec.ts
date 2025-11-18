@@ -1,49 +1,34 @@
 import { Test, type TestingModule } from "@nestjs/testing";
-import { TodoController } from "./todo.controller";
-import { TodoService } from "./todo.service";
+import { HealthController } from "./health.controller";
+import { HealthService } from "./health.service";
 
-jest.mock(
-  "@orpc/nest",
-  () => ({
-    Implement: () => () => {},
-    implement: () => ({
-      handler: (resolver: (...args: never[]) => unknown) => resolver,
-    }),
-  }),
-  { virtual: true }
-);
-
-jest.mock(
-  "@my-better-t-app/contracts",
-  () => ({
-    listTodoContract: {},
-  }),
-  { virtual: true }
-);
-
-describe("TodoController", () => {
-  let controller: TodoController;
-  const todoServiceMock = {
-    listTodos: jest.fn(),
-  };
+describe("HealthController", () => {
+  let controller: HealthController;
+  let service: HealthService;
 
   beforeEach(async () => {
-    todoServiceMock.listTodos.mockReset();
-
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [TodoController],
+      controllers: [HealthController],
       providers: [
         {
-          provide: TodoService,
-          useValue: todoServiceMock,
+          provide: HealthService,
+          useValue: {
+            healthCheck: jest.fn().mockResolvedValue("OK"),
+          },
         },
       ],
     }).compile();
 
-    controller = module.get<TodoController>(TodoController);
+    controller = module.get<HealthController>(HealthController);
+    service = module.get<HealthService>(HealthService);
   });
 
   it("should be defined", () => {
     expect(controller).toBeDefined();
+  });
+
+  it("should return OK from healthCheck endpoint", async () => {
+    await expect(controller.check()).resolves.toEqual("OK");
+    expect(service.healthCheck).toHaveBeenCalled();
   });
 });

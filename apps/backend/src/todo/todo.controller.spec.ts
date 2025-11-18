@@ -5,7 +5,9 @@ import { TodoService } from "./todo.service";
 jest.mock(
   "@orpc/nest",
   () => ({
-    Implement: () => () => {},
+    Implement: () => () => {
+      return;
+    },
     implement: () => ({
       handler: (resolver: (...args: never[]) => unknown) => resolver,
     }),

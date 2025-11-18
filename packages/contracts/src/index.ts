@@ -2,8 +2,8 @@
 // This package contains the API contracts for ORPC
 
 import { oc } from "@orpc/contract";
-import { todo } from "./todo.contract";
 import { healthCheck } from "./health.contract";
+import { todo } from "./todo.contract";
 export const contract = oc.router({
   todo,
   healthCheck,

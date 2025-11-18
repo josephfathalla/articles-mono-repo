@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from "@/utils/orpc";
-import type { Route } from "./+types/_index";
 
 const TITLE_TEXT = `
  ██████╗ ███████╗████████╗████████╗███████╗██████╗
@@ -18,7 +17,7 @@ const TITLE_TEXT = `
     ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
  `;
 
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
     { title: "my-better-t-app" },
     { name: "description", content: "my-better-t-app is a web application" },
@@ -41,11 +40,15 @@ export default function Home() {
               }`}
             />
             <span className="text-muted-foreground text-sm">
-              {healthCheck.isLoading
-                ? "Checking..."
-                : healthCheck.data
-                  ? "Connected"
-                  : "Disconnected"}
+              {(() => {
+                if (healthCheck.isLoading) {
+                  return "Checking...";
+                }
+                if (healthCheck.data) {
+                  return "Connected";
+                }
+                return "Disconnected";
+              })()}
             </span>
           </div>
         </section>
