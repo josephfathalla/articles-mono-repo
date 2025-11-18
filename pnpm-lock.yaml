@@ -12,9 +12,6 @@ catalogs:
     '@orpc/contract':
       specifier: 1.11.3
       version: 1.11.3
-    '@orpc/nest':
-      specifier: ^1.10.2
-      version: 1.10.2
     '@orpc/openapi':
       specifier: 1.10.2
       version: 1.10.2
@@ -66,6 +63,9 @@ importers:
       '@biomejs/biome':
         specifier: 2.3.6
         version: 2.3.6
+      '@biomejs/cli-darwin-arm64':
+        specifier: ^2.3.6
+        version: 2.3.6
       '@types/node':
         specifier: ^22.13.11
         version: 22.18.13
@@ -81,9 +81,6 @@ importers:
 
   apps/backend:
     dependencies:
-      '@my-better-t-app/api':
-        specifier: workspace:*
-        version: link:../../packages/api
       '@my-better-t-app/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -190,9 +187,6 @@ importers:
 
   apps/server:
     dependencies:
-      '@my-better-t-app/api':
-        specifier: workspace:*
-        version: link:../../packages/api
       '@my-better-t-app/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -245,9 +239,6 @@ importers:
 
   apps/web:
     dependencies:
-      '@my-better-t-app/api':
-        specifier: workspace:*
-        version: link:../../packages/api
       '@my-better-t-app/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -6523,8 +6514,7 @@ snapshots:
   '@biomejs/cli-darwin-arm64@1.9.4':
     optional: true
 
-  '@biomejs/cli-darwin-arm64@2.3.6':
-    optional: true
+  '@biomejs/cli-darwin-arm64@2.3.6': {}
 
   '@biomejs/cli-darwin-x64@2.3.6':
     optional: true

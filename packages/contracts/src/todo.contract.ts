@@ -11,7 +11,7 @@ export const listTodoContract = oc
   .route({
     method: "GET",
     path: "/",
-    tags:["todos"],
+    tags: ["todos"],
     summary: "List all todos",
     description: "Retrieves all todo items from the system",
   })
@@ -21,9 +21,10 @@ export const createTodoContract = oc
   .route({
     method: "POST",
     path: "/",
-    tags:["todos"],
+    tags: ["todos"],
     summary: "Create a new todo",
-    description: "Creates a new todo item with the provided text. The todo will be initialized as incomplete.",
+    description:
+      "Creates a new todo item with the provided text. The todo will be initialized as incomplete.",
   })
   .input(TodoSchema.pick({ text: true }))
   .output(TodoSchema);
@@ -32,9 +33,10 @@ export const toggleTodoContract = oc
   .route({
     method: "PUT",
     path: "/",
-    tags:["todos"],
+    tags: ["todos"],
     summary: "Update todo completion status",
-    description: "Updates the completion status of a todo item by its ID. Use this to mark a todo as completed or incomplete.",
+    description:
+      "Updates the completion status of a todo item by its ID. Use this to mark a todo as completed or incomplete.",
   })
   .input(TodoSchema.pick({ id: true, completed: true }))
   .output(TodoSchema);
@@ -43,9 +45,10 @@ export const deleteTodoContract = oc
   .route({
     method: "DELETE",
     path: "/",
-    tags:["todos"],
+    tags: ["todos"],
     summary: "Delete a todo",
-    description: "Deletes a todo item by its ID. Returns the deleted todo item.",
+    description:
+      "Deletes a todo item by its ID. Returns the deleted todo item.",
   })
   .input(TodoSchema.pick({ id: true }))
   .output(TodoSchema);
