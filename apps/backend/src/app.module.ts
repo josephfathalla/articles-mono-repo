@@ -3,12 +3,14 @@ import { REQUEST } from "@nestjs/core";
 import { ORPCModule, onError } from "@orpc/nest";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-// import { AuthModule } from '@thallesp/nestjs-better-auth';
-// import { auth } from '@my-better-t-app/auth';
 import { TodoModule } from "./todo/todo.module";
 import { HealthModule } from "./health/health.module";
+import { AuthModule } from "@thallesp/nestjs-better-auth";
+import { auth } from "@my-better-t-app/auth";
+
 @Module({
   imports: [
+     AuthModule.forRoot({ auth }),
     ORPCModule.forRootAsync({
       // or .forRoot
       useFactory: (request: Request) => ({
