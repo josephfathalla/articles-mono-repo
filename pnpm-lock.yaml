@@ -10,7 +10,7 @@ catalogs:
       specifier: ^1.10.0
       version: 1.11.3
     '@orpc/contract':
-      specifier: ^1.11.3
+      specifier: 1.11.3
       version: 1.11.3
     '@orpc/nest':
       specifier: ^1.10.2
@@ -18,8 +18,11 @@ catalogs:
     '@orpc/openapi':
       specifier: 1.10.2
       version: 1.10.2
+    '@orpc/openapi-client':
+      specifier: 1.10.2
+      version: 1.10.2
     '@orpc/server':
-      specifier: ^1.10.0
+      specifier: 1.10.2
       version: 1.10.2
     '@orpc/zod':
       specifier: 1.10.2
@@ -106,6 +109,9 @@ importers:
         specifier: ^1.10.2
         version: 1.10.2(@nestjs/common@11.1.8(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.8)(express@5.1.0)(rxjs@7.8.2)(ws@8.18.3)
       '@orpc/openapi':
+        specifier: 'catalog:'
+        version: 1.10.2(ws@8.18.3)
+      '@orpc/server':
         specifier: 'catalog:'
         version: 1.10.2(ws@8.18.3)
       '@orpc/zod':
@@ -242,9 +248,18 @@ importers:
       '@my-better-t-app/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@my-better-t-app/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@orpc/client':
         specifier: 'catalog:'
         version: 1.11.3
+      '@orpc/contract':
+        specifier: 'catalog:'
+        version: 1.11.3
+      '@orpc/openapi-client':
+        specifier: 'catalog:'
+        version: 1.10.2
       '@orpc/server':
         specifier: 'catalog:'
         version: 1.10.2(ws@8.18.3)

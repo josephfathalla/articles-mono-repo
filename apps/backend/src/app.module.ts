@@ -6,6 +6,7 @@ import { AppService } from "./app.service";
 // import { AuthModule } from '@thallesp/nestjs-better-auth';
 // import { auth } from '@my-better-t-app/auth';
 import { TodoModule } from "./todo/todo.module";
+import { HealthModule } from "./health/health.module";
 @Module({
   imports: [
     ORPCModule.forRootAsync({
@@ -22,6 +23,7 @@ import { TodoModule } from "./todo/todo.module";
       inject: [REQUEST],
     }),
     TodoModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

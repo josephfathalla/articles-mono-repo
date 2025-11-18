@@ -10,10 +10,38 @@ export const TodoSchema = z.object({
 export const listTodoContract = oc
   .route({
     method: "GET",
-    path: "/todos", // Path is required for NestJS implementation
+    path:"/"
   })
   .output(z.array(TodoSchema));
 
-export const todo = {
+export const createTodoContract = oc
+  .route({
+    method: "POST",
+    path:"/"
+  })
+  .input(TodoSchema.pick({ text: true }))
+  .output(TodoSchema);
+
+export const toggleTodoContract = oc
+  .route({
+    method: "PUT",
+    path:"/"
+  })
+  .input(TodoSchema.pick({ id: true, completed: true }))
+  .output(TodoSchema);
+
+export const deleteTodoContract = oc
+  .route({
+    method: "DELETE",
+    path:"/"
+  })
+  .input(TodoSchema.pick({ id: true }))
+  .output(TodoSchema);
+
+
+export const todo = oc.prefix("/todos").router({
   list: listTodoContract,
-};
+  create: createTodoContract,
+  toggle: toggleTodoContract,
+  delete: deleteTodoContract,
+});

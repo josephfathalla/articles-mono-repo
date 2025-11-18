@@ -16,7 +16,7 @@ import { orpc } from "@/utils/orpc";
 export default function Todos() {
   const [newTodoText, setNewTodoText] = useState("");
 
-  const todos = useQuery(orpc.todo.getAll.queryOptions());
+  const todos = useQuery(orpc.todo.list.queryOptions());
   const createMutation = useMutation(
     orpc.todo.create.mutationOptions({
       onSuccess: () => {

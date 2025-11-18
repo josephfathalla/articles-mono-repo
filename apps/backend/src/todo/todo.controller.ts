@@ -13,6 +13,15 @@ export class TodoController {
       list: implement(contract.todo.list).handler(async () =>
         this.todoService.listTodos()
       ),
+      create: implement(contract.todo.create).handler(async ({ input }) =>
+        this.todoService.createTodo(input)
+      ),
+      toggle: implement(contract.todo.toggle).handler(async ({ input }) =>
+        this.todoService.toggleTodo(input)
+      ),
+      delete: implement(contract.todo.delete).handler(async ({ input }) =>
+        this.todoService.deleteTodo(input)
+      ),
     };
   }
 }

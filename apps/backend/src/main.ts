@@ -8,12 +8,21 @@ import cors from "cors";
 import { AppModule } from "./app.module";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    bodyParser: false,
-  });
+  const app = await NestFactory.create(AppModule);
+
+  app.use(
+    cors({
+      origin: process.env.CORS_ORIGIN || "",
+      methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+      credentials: true,
+    })
+  );
 
   const httpAdapter = app.getHttpAdapter();
   const express = httpAdapter.getInstance();
+  
+  // API Reference handler only (RPC is handled by ORPCModule)
   const referenceHandler = new OpenAPIHandler(contract as any, {
     plugins: [
       new OpenAPIReferencePlugin({
@@ -28,22 +37,15 @@ async function bootstrap() {
   });
 
   express.use(async (req, res, next) => {
-    const result = await referenceHandler.handle(req, res, {
+    const apiResult = await referenceHandler.handle(req, res, {
       prefix: "/api-reference",
       context: { request: req },
     });
-    if (!result.matched) next();
+    if (apiResult.matched) return;
+
+    next();
   });
 
   await app.listen(process.env.PORT ?? 4000);
-
-  app.use(
-    cors({
-      origin: process.env.CORS_ORIGIN || "",
-      methods: ["GET", "POST", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization"],
-      credentials: true,
-    })
-  );
 }
 bootstrap();
