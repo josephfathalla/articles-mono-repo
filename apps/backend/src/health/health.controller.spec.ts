@@ -2,6 +2,39 @@ import { Test, type TestingModule } from "@nestjs/testing";
 import { HealthController } from "./health.controller";
 import { HealthService } from "./health.service";
 
+jest.mock(
+  "@orpc/nest",
+  () => ({
+    Implement: () => () => {
+      return;
+    },
+    implement: () => ({
+      handler: (resolver: (...args: never[]) => unknown) => resolver,
+    }),
+  }),
+  { virtual: true }
+);
+
+jest.mock(
+  "@thallesp/nestjs-better-auth",
+  () => ({
+    AllowAnonymous: () => () => {
+      return;
+    },
+  }),
+  { virtual: true }
+);
+
+jest.mock(
+  "@my-better-t-app/contracts",
+  () => ({
+    contract: {
+      healthCheck: {},
+    },
+  }),
+  { virtual: true }
+);
+
 describe("HealthController", () => {
   let controller: HealthController;
   let service: HealthService;

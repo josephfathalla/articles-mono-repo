@@ -16,7 +16,7 @@ describe("HealthService", () => {
     expect(service).toBeDefined();
   });
 
-  it("should return OK", async () => {
-    await expect(service.healthCheck()).resolves.toEqual("OK");
+  it("should return OK", () => {
+    expect(service.healthCheck()).toEqual("OK");
   });
 });

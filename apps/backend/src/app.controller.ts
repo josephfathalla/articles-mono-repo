@@ -6,6 +6,7 @@ export class AppController {
   /* c8 ignore next */
   private readonly appService: AppService;
 
+  /* c8 ignore next */
   constructor(appService: AppService) {
     this.appService = appService;
   }

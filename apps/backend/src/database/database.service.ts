@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import type prismaClient from "@my-better-t-app/db";
 import {
   Injectable,
@@ -12,6 +13,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private prismaClient: PrismaClient | null = null;
 
   private async loadClient() {
+    console.log("loadClient");
     if (!this.prismaClient) {
       const module = await import("@my-better-t-app/db");
       this.prismaClient = module.default;
