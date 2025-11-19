@@ -12,7 +12,8 @@
   },
   "type": "module",
   "scripts": {
-    "build": "tsdown"
+    "build": "tsdown",
+    "build-contracts": "tsdown"
   },
   "devDependencies": {
     "tsdown": "catalog:"
