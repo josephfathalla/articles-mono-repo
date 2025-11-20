@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Loader2, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,7 +16,18 @@ import { orpc } from "@/utils/orpc";
 export default function Todos() {
   const [newTodoText, setNewTodoText] = useState("");
 
-  const todos = useQuery(orpc.todo.list.queryOptions());
+  const todos = useQuery(
+    orpc.todo.list.queryOptions({
+      input: {
+        page: "1",
+        limit: "10",
+        select: "all",
+        sort: { field: "text", criteria: "asc" },
+        // filter: [{ path: "text", operator: "contains", value: "wa" }],
+      },
+    })
+  );
+
   const createMutation = useMutation(
     orpc.todo.create.mutationOptions({
       onSuccess: () => {
@@ -55,11 +66,14 @@ export default function Todos() {
     deleteMutation.mutate({ id });
   };
 
+  const data = useMemo(() => todos.data?.data, [todos.data]);
+  const meta = useMemo(() => todos.data?.meta, [todos.data]);
+
   return (
     <div className="mx-auto w-full max-w-md py-10">
       <Card>
         <CardHeader>
-          <CardTitle>Todo List</CardTitle>
+          <CardTitle>Todo List ({meta?.pagination.total})</CardTitle>
           <CardDescription>Manage your tasks efficiently</CardDescription>
         </CardHeader>
         <CardContent>
@@ -91,13 +105,13 @@ export default function Todos() {
             </div>
           )}
 
-          {!todos.isLoading && todos.data?.length === 0 && (
+          {!todos.isLoading && data?.length === 0 && (
             <p className="py-4 text-center">No todos yet. Add one above!</p>
           )}
 
-          {!todos.isLoading && todos.data?.length && todos.data.length > 0 && (
+          {!todos.isLoading && data?.length && data?.length > 0 && (
             <ul className="space-y-2">
-              {todos.data?.map((todo) => (
+              {data?.map((todo) => (
                 <li
                   className="flex items-center justify-between rounded-md border p-2"
                   key={todo.id}
@@ -107,7 +121,7 @@ export default function Todos() {
                       checked={todo.completed}
                       id={`todo-${todo.id}`}
                       onCheckedChange={() =>
-                        handleToggleTodo(todo.id, todo.completed)
+                        handleToggleTodo(todo.id, todo.completed ?? false)
                       }
                     />
                     <label

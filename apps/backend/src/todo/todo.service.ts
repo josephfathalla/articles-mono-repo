@@ -13,8 +13,9 @@ export class TodoService {
   }
 
   async listTodos() {
-    const query = await this.qb.query({ model: "Todo" });
-    return await this.databaseService.prisma.todo.findMany(query);
+    const { query, meta } = await this.qb.query({ model: "Todo" });
+    const data = await this.databaseService.prisma.todo.findMany(query);
+    return { data, meta };
   }
 
   async createTodo({ text }: { text: string }) {

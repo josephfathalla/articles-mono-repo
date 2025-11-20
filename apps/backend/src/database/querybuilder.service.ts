@@ -49,30 +49,56 @@ export class QuerybuilderService {
     setHeaders?: boolean;
     justPaginate?: boolean;
     forbiddenFields?: string[];
-  }): Promise<Partial<QueryResponse>> {
+  }): Promise<{
+    query: Partial<QueryResponse>;
+    meta: {
+      pagination: {
+        total: number;
+        page: number;
+        pageSize: number;
+        pageCount: number;
+      };
+    };
+  }> {
     return await this.querybuilder
       .query(primaryKey, depth, setHeaders, forbiddenFields)
       .then(async (query) => {
         if (where) {
           query.where = mergeWhere ? { ...query.where, ...where } : where;
         }
+
+        let count = 0;
+        let pageCount = 0;
+        const pageSize = this.request.query.limit
+          ? Number.parseInt(this.request.query.limit as string, 10)
+          : 10;
+        const page = this.request.query.page
+          ? Number.parseInt(this.request.query.page as string, 10)
+          : 1;
+        const prismaClient = this.databaseService
+          .prisma as unknown as PrismaClient;
+        // biome-ignore lint/suspicious/noExplicitAny: Dynamic model access
+        const modelDelegate = (prismaClient as any)[model];
+        if (modelDelegate) {
+          count = await modelDelegate.count({ where: query.where });
+          pageCount = Math.ceil(count / pageSize);
+        }
         if (setHeaders) {
-          const prismaClient = this.databaseService
-            .prisma as unknown as PrismaClient;
-          // biome-ignore lint/suspicious/noExplicitAny: Dynamic model access
-          const modelDelegate = (prismaClient as any)[model];
-          if (modelDelegate) {
-            const count = await modelDelegate.count({ where: query.where });
-            this.request.res?.setHeader("count", count.toString());
-          }
+          this.request.res?.setHeader("count", count.toString());
         }
 
         if (justPaginate) {
           const { include: _include, select: _select, ...rest } = query;
-          return rest;
+          return {
+            query: { ...rest },
+            meta: { pagination: { total: count, page, pageSize, pageCount } },
+          };
         }
 
-        return { ...query };
+        return {
+          query,
+          meta: { pagination: { total: count, page, pageSize, pageCount } },
+        };
       })
       .catch((err) => {
         if (err.response?.message) {
