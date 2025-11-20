@@ -3,8 +3,11 @@ import { Module } from "@nestjs/common";
 import { REQUEST } from "@nestjs/core";
 import { ORPCModule, onError } from "@orpc/nest";
 import { AuthModule } from "@thallesp/nestjs-better-auth";
+import { Querybuilder } from "nestjs-prisma-querybuilder";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
+import { DatabaseModule } from "./database/database.module";
+import { QuerybuilderService } from "./database/querybuilder.service";
 import { HealthModule } from "./health/health.module";
 import { TodoModule } from "./todo/todo.module";
 
@@ -24,10 +27,12 @@ import { TodoModule } from "./todo/todo.module";
       }),
       inject: [REQUEST],
     }),
+
+    DatabaseModule,
     TodoModule,
     HealthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, Querybuilder, QuerybuilderService],
 })
 export class AppModule {}

@@ -1,11 +1,12 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule } from "../database/database.module";
+import { Querybuilder } from "nestjs-prisma-querybuilder";
+import { QuerybuilderService } from "src/database/querybuilder.service";
 import { TodoController } from "./todo.controller";
 import { TodoService } from "./todo.service";
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [],
   controllers: [TodoController],
-  providers: [TodoService],
+  providers: [TodoService, QuerybuilderService, Querybuilder],
 })
 export class TodoModule {}
