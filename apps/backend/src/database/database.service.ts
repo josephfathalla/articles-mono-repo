@@ -13,7 +13,6 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private prismaClient: PrismaClient | null = null;
 
   private async loadClient() {
-    console.log("loadClient");
     if (!this.prismaClient) {
       const module = await import("@my-better-t-app/db");
       this.prismaClient = module.default;
@@ -27,7 +26,6 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     }
     return this.prismaClient;
   }
-
   async onModuleInit() {
     const client = await this.loadClient();
     await client.$connect();
