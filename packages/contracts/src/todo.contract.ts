@@ -1,6 +1,6 @@
 import { oc } from "@orpc/contract";
 import { z } from "zod";
-
+import { createQueryBuilderSchema } from "./interfaces/PaginationQueryBuilder";
 export const TodoSchema = z.object({
   id: z.number().int().min(1),
   text: z.string(),
@@ -15,7 +15,26 @@ export const listTodoContract = oc
     summary: "List all todos",
     description: "Retrieves all todo items from the system",
   })
-  .output(z.array(TodoSchema));
+  .input(createQueryBuilderSchema(["id", "text", "completed"]))
+  .output(
+    z.object({
+      data: z.array(
+        z.object({
+          id: z.number().int().min(1),
+          text: z.string().optional(),
+          completed: z.boolean().optional(),
+        })
+      ),
+      meta: z.object({
+        pagination: z.object({
+          page: z.number().int().min(1),
+          pageSize: z.number().int().min(1),
+          pageCount: z.number().int().min(0),
+          total: z.number().int().min(0),
+        }),
+      }),
+    })
+  );
 
 export const createTodoContract = oc
   .route({

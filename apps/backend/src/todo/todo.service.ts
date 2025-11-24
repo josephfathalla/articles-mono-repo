@@ -1,15 +1,21 @@
 import { Injectable } from "@nestjs/common";
+import { QuerybuilderService } from "src/database/querybuilder.service";
 import { DatabaseService } from "../database/database.service";
 
 @Injectable()
 export class TodoService {
   private readonly databaseService: DatabaseService;
-  constructor(databaseService: DatabaseService) {
+  private readonly qb: QuerybuilderService;
+
+  constructor(databaseService: DatabaseService, qb: QuerybuilderService) {
     this.databaseService = databaseService;
+    this.qb = qb;
   }
 
   async listTodos() {
-    return await this.databaseService.prisma.todo.findMany();
+    const { query, meta } = await this.qb.query({ model: "Todo" });
+    const data = await this.databaseService.prisma.todo.findMany(query);
+    return { data, meta };
   }
 
   async createTodo({ text }: { text: string }) {

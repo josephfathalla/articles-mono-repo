@@ -15,7 +15,8 @@ async function bootstrap() {
     cors({
       origin: process.env.CORS_ORIGIN || "",
       methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
-      allowedHeaders: ["Content-Type", "Authorization"],
+      allowedHeaders: ["Content-Type", "Authorization", "count"],
+      exposedHeaders: ["count"],
       credentials: true,
     })
   );
