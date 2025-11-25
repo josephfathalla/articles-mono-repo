@@ -13,7 +13,7 @@ async function bootstrap() {
 
   app.use(
     cors({
-      origin: process.env.CORS_ORIGIN || "",
+      origin: "http://localhost:3002",
       methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
       allowedHeaders: ["Content-Type", "Authorization", "count"],
       exposedHeaders: ["count"],
