@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+      # - "8080:8080" # Dashboard
+    volumes:
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: always
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 300 --cleanup
+    restart: always
+
+  backend:
+    image: ghcr.io/${GITHUB_REPOSITORY}-backend:latest
+    restart: always
+    env_file: .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`${BACKEND_DOMAIN}`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=myresolver"
+      - "traefik.http.services.backend.loadbalancer.server.port=4000"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  web:
+    image: ghcr.io/${GITHUB_REPOSITORY}-web:latest
+    restart: always
+    env_file: .env
+    environment:
+      - PORT=3000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.web.rule=Host(`${WEB_DOMAIN}`)"
+      - "traefik.http.routers.web.entrypoints=websecure"
+      - "traefik.http.routers.web.tls.certresolver=myresolver"
+      - "traefik.http.services.web.loadbalancer.server.port=3000"
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  website:
+    image: ghcr.io/${GITHUB_REPOSITORY}-website:latest
+    restart: always
+    env_file: .env
+    environment:
+      - PORT=3000
+      - NITRO_PORT=3000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.website.rule=Host(`${WEBSITE_DOMAIN}`)"
+      - "traefik.http.routers.website.entrypoints=websecure"
+      - "traefik.http.routers.website.tls.certresolver=myresolver"
+      - "traefik.http.services.website.loadbalancer.server.port=3000"
+      - "com.centurylinklabs.watchtower.enable=true"
+
