@@ -21,7 +21,8 @@
       "!**/wrangler.jsonc",
       "!**/.source",
       "!**/apps/server",
-      "!**/packages/api"
+      "!**/packages/api",
+      "!**/apps/website/src/routeTree.gen.ts"
     ]
   },
   "overrides": [
