@@ -24,6 +24,9 @@ RUN pnpm install
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
+# Generate Prisma Client requires DATABASE_URL
+ENV DATABASE_URL="postgresql://dummy:5432/dummy"
+
 RUN turbo run db:generate
 RUN turbo run build --filter=website...
 

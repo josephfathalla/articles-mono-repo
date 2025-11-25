@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   traefik:
@@ -68,4 +68,3 @@ services:
       - "traefik.http.routers.website.tls.certresolver=myresolver"
       - "traefik.http.services.website.loadbalancer.server.port=3000"
       - "com.centurylinklabs.watchtower.enable=true"
-
