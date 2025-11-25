@@ -26,10 +26,7 @@ RUN pnpm install
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
-ENV DATABASE_URL="postgresql://dummy:5432/dummy"
-
-# Generate Prisma Client and build
-RUN turbo run db:generate
+RUN DATABASE_URL="postgresql://dummy:5432/dummy" turbo run db:generate
 RUN turbo run build --filter=backend...
 
 FROM base AS runner
