@@ -1,9 +1,11 @@
 import { contract } from "@my-better-t-app/contracts";
 import { Controller } from "@nestjs/common";
 import { Implement, implement } from "@orpc/nest";
+import { AllowAnonymous } from "@thallesp/nestjs-better-auth";
 import { TodoService } from "./todo.service";
 
 @Controller()
+@AllowAnonymous()
 export class TodoController {
   private readonly todoService: TodoService;
   constructor(todoService: TodoService) {
