@@ -9,15 +9,12 @@ WORKDIR /app
 COPY . .
 RUN turbo prune --scope=website --docker
 
-RUN apk --no-cache add curl gnupg bash \
-  && curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.alpine.sh' | bash \
-  && apk --no-cache add infisical \
-  && rm -rf /var/cache/apk/* /tmp/*
 
 FROM base AS installer
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
+RUN npm install -g @infisical/cli
 # First install dependencies
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
