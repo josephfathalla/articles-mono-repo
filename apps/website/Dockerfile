@@ -55,5 +55,5 @@ COPY --chown=nextjs:nodejs apps/website/docker-entrypoint.sh ./docker-entrypoint
 RUN chmod +x ./docker-entrypoint.sh
 
 # Copy prisma schema if needed for engine, but usually client is enough in node_modules
-CMD ["docker-entrypoint.sh"]
+CMD ["./docker-entrypoint.sh"]
 
