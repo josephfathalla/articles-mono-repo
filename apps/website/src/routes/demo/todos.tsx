@@ -19,7 +19,7 @@ export const Route = createFileRoute("/demo/todos")({
 });
 
 function RouteComponent() {
-  const data = useSuspenseQuery(
+  const { data } = useSuspenseQuery(
     orpc.todo.list.queryOptions({
       input: {
         page: "1",
@@ -29,11 +29,12 @@ function RouteComponent() {
       },
     })
   );
+
   return (
     <div>
       <h1>Todos</h1>
       <ul>
-        {data.data?.data.map((todo) => (
+        {data?.data?.map((todo) => (
           <li key={todo.id}>{todo.text}</li>
         ))}
       </ul>

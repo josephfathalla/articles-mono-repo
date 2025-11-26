@@ -26,9 +26,8 @@ export const queryClient = new QueryClient({
 
 const getORPCClient = createIsomorphicFn()
   .server((): ContractRouterClient<typeof contract> => {
-    console.log("Server request");
     const link = new OpenAPILink(contract, {
-      url: "http://localhost:4000",
+      url: process.env.VITE_SERVER_URL ?? "",
       fetch: (url, options) => {
         // TODO: Add headers from the server request here to support SSR with auth
         const headers = getRequestHeaders();
@@ -42,10 +41,8 @@ const getORPCClient = createIsomorphicFn()
     return createORPCClient(link);
   })
   .client((): ContractRouterClient<typeof contract> => {
-    console.log("Client request");
     const link = new OpenAPILink(contract, {
-      //   url: `${import.meta.env.VITE_SERVER_URL}/rpc`,
-      url: "http://localhost:4000",
+      url: import.meta.env.VITE_SERVER_URL ?? "",
       fetch(_url, options) {
         return fetch(_url, {
           ...options,
