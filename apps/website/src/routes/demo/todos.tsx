@@ -32,7 +32,7 @@ function RouteComponent() {
 
   return (
     <div>
-      <h1>Todos</h1>
+      <h1>Todos {import.meta.env.VITE_SERVER_URL ?? "No URL"}</h1>
       <ul>
         {data?.data?.map((todo) => (
           <li key={todo.id}>{todo.text}</li>
