@@ -9,6 +9,10 @@ WORKDIR /app
 COPY . .
 RUN turbo prune --scope=website --docker
 
+RUN apk add --no-cache curl \
+  && curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.alpine.sh' | sh \
+  && apk del curl
+
 FROM base AS installer
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
@@ -47,6 +51,10 @@ COPY --from=installer /app/apps/website/.output ./.output
 # Let's assume standalone for now, but if it fails we might need node_modules.
 # Actually, let's copy node_modules just in case, or rely on the bundled output.
 # The standard for Nitro is that .output is standalone.
+# Copy entrypoint script
+COPY --chown=nextjs:nodejs apps/website/docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
 
-CMD ["node", ".output/server/index.mjs"]
+# Copy prisma schema if needed for engine, but usually client is enough in node_modules
+CMD ["docker-entrypoint.sh"]
 
