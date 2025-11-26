@@ -7,14 +7,13 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { authQueries } from "@/services/queries";
 import Header from "../components/Header";
 import appCss from "../styles.css?url";
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {
-    beforeLoad: async ({ context }) => {
-      await context.queryClient.ensureQueryData(authQueries.user());
-    },
+    // beforeLoad: async ({ context }) => {
+    //   await context.queryClient.ensureQueryData(authQueries.user());
+    // },
     head: () => ({
       meta: [
         {
