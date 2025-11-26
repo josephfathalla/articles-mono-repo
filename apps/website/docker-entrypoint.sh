@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+set -ex
 
 # echo "Running database migrations..."
 # cd /app/packages/database
