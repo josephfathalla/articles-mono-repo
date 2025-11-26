@@ -3,11 +3,13 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
+      "development": "./src/index.ts",
+      "default": "./dist/index.js"
     },
     "./*": {
       "types": "./dist/*.d.ts",
-      "default": "./src/*.ts"
+      "development": "./src/*.ts",
+      "default": "./dist/*.js"
     }
   },
   "type": "module",

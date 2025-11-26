@@ -1,0 +1,63 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Build outputs (will be regenerated in container)
+dist
+build
+*.tsbuildinfo
+
+# Test files and coverage
+test
+*.spec.ts
+*.e2e-spec.ts
+coverage
+.nyc_output
+jest.config.js
+jest-e2e.json
+
+# Environment variables
+.env
+.env*.local
+.env.production
+.env.development
+
+# IDEs and editors
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+*.md
+
+# Turbo
+.turbo
+
+# Cache
+.cache
+tmp
+temp
+
+# Misc
+*.tgz
+*.zip
+

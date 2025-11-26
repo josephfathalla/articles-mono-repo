@@ -4,10 +4,12 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "development": "./src/index.ts",
       "default": "./dist/index.js"
     },
     "./*": {
       "types": "./dist/*.d.ts",
+      "development": "./src/*.ts",
       "default": "./dist/*.js"
     }
   },
@@ -28,6 +30,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.0.0",
     "@prisma/client": "catalog:",
+    "@prisma/client-runtime-utils": "^7.0.0",
     "dotenv": "catalog:",
     "zod": "catalog:"
   }
