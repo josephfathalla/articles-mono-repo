@@ -11,6 +11,10 @@ WORKDIR /app
 COPY . .
 RUN turbo prune --scope=backend --docker
 
+RUN apk add --no-cache curl \
+  && curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.alpine.sh' | sh \
+  && apk del curl
+
 FROM base AS installer
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
@@ -61,7 +65,10 @@ COPY --from=installer /app/packages/auth ./packages/auth
 COPY --from=installer /app/packages/contracts ./packages/contracts
 COPY --from=installer /app/packages/db ./packages/db
 
+# Copy entrypoint script
+COPY --chown=nestjs:nodejs apps/backend/docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
+
 # Copy prisma schema if needed for engine, but usually client is enough in node_modules
-WORKDIR /app/apps/backend
-CMD ["node", "dist/main.js"]
+CMD ["docker-entrypoint.sh"]
 

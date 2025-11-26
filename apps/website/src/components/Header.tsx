@@ -73,6 +73,19 @@ export default function Header() {
             <SquareFunction size={20} />
             <span className="font-medium">Todos Example</span>
           </Link>
+          <Link
+            activeProps={{
+              className:
+                "flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2",
+            }}
+            className="mb-2 flex items-center gap-3 rounded-lg p-3 transition-colors hover:bg-gray-800"
+            onClick={() => setIsOpen(false)}
+            preload="intent"
+            to="/profile"
+          >
+            <SquareFunction size={20} />
+            <span className="font-medium">Profile</span>
+          </Link>
         </nav>
       </aside>
     </>
