@@ -11,9 +11,10 @@ WORKDIR /app
 COPY . .
 RUN turbo prune --scope=backend --docker
 
-RUN apk add --no-cache curl \
-  && curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.alpine.sh' | sh \
-  && apk del curl
+RUN apk --no-cache add curl gnupg bash \
+  && curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.alpine.sh' | bash \
+  && apk --no-cache add infisical \
+  && rm -rf /var/cache/apk/* /tmp/*
 
 FROM base AS installer
 RUN apk add --no-cache libc6-compat
