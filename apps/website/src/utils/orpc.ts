@@ -27,7 +27,7 @@ export const queryClient = new QueryClient({
 const getORPCClient = createIsomorphicFn()
   .server((): ContractRouterClient<typeof contract> => {
     const link = new OpenAPILink(contract, {
-      url: process.env.VITE_SERVER_URL ?? "",
+      url: process.env.INTERNAL_API_URL ?? process.env.VITE_SERVER_URL ?? "",
       fetch: (url, options) => {
         // TODO: Add headers from the server request here to support SSR with auth
         const headers = getRequestHeaders();
