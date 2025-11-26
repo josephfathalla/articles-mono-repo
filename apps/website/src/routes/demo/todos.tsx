@@ -1,25 +1,25 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { orpc } from "@/utils/orpc";
 
 export const Route = createFileRoute("/demo/todos")({
   component: RouteComponent,
-  loader: ({ context }) => {
-    context.queryClient.ensureQueryData(
-      orpc.todo.list.queryOptions({
-        input: {
-          page: "1",
-          limit: "10",
-          select: "all",
-          sort: { field: "text", criteria: "asc" },
-        },
-      })
-    );
-  },
+  // loader: ({ context }) => {
+  //   context.queryClient.ensureQueryData(
+  //     orpc.todo.list.queryOptions({
+  //       input: {
+  //         page: "1",
+  //         limit: "10",
+  //         select: "all",
+  //         sort: { field: "text", criteria: "asc" },
+  //       },
+  //     })
+  //   );
+  // },
 });
 
 function RouteComponent() {
-  const { data } = useSuspenseQuery(
+  const { data } = useQuery(
     orpc.todo.list.queryOptions({
       input: {
         page: "1",

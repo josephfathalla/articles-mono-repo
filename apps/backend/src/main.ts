@@ -35,7 +35,7 @@ async function bootstrap() {
           schemaConverters: [new ZodToJsonSchemaConverter()],
           docsPath: "/",
           specGenerateOptions: ({ request }) => ({
-            info: { title: "My Better T API", version: "1.0.0" },
+            info: { title: "Boilerplate Backend API", version: "1.0.0" },
             servers: [{ url: `${request.url.origin}/` }], // real API base
           }),
         }),
