@@ -17,7 +17,6 @@ FROM base AS installer
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-RUN npm install -g @infisical/cli
 # First install dependencies (as they change less often)
 #COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
@@ -49,6 +48,7 @@ RUN pnpm --filter backend exec pnpm build
 FROM base AS runner
 WORKDIR /app
 
+RUN npm install -g @infisical/cli
 # Don't run as root
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nestjs

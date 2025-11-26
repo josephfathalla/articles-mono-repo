@@ -14,7 +14,7 @@ FROM base AS installer
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-RUN npm install -g @infisical/cli
+
 # First install dependencies
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
@@ -36,6 +36,7 @@ RUN turbo run build --filter=website...
 FROM base AS runner
 WORKDIR /app
 
+RUN npm install -g @infisical/cli
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
