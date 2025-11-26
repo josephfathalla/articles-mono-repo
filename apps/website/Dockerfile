@@ -23,11 +23,12 @@ RUN pnpm install
 # Build
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
+COPY tsconfig.base.json tsconfig.base.json
 
 # Generate Prisma Client requires DATABASE_URL
 ENV DATABASE_URL="postgresql://dummy:5432/dummy"
+RUN pnpm --filter @my-better-t-app/db exec prisma generate
 
-RUN turbo run db:generate
 RUN turbo run build --filter=website...
 
 FROM base AS runner
