@@ -32,8 +32,14 @@ COPY tsconfig.base.json tsconfig.base.json
 ENV DATABASE_URL="postgresql://dummy:5432/dummy"
 RUN pnpm --filter @my-better-t-app/db exec prisma generate
 
+
+ARG INFISICAL_MACHINE_CLIENT_ID
+ARG INFISICAL_MACHINE_CLIENT_SECRET
+ARG INFISICAL_PROJECT_ID
+ARG INFISICAL_SECRET_ENV
+ARG INFISICAL_API_URL
 # Wrap the build command with infisical run
-RUN export INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id="$INFISICAL_MACHINE_CLIENT_ID" --client-secret="$INFISICAL_MACHINE_CLIENT_SECRET" --silent --plain --domain="$INFISICAL_API_URL") && \
+RUN export INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id="$INFISICAL_MACHINE_CLIENT_ID" --client-secret="$INFISICAL_MACHINE_CLIENT_SECRET" --domain="$INFISICAL_API_URL" --silent --plain ) && \
     infisical run --token="$INFISICAL_TOKEN" --projectId="$INFISICAL_PROJECT_ID" --env="$INFISICAL_SECRET_ENV" --domain="$INFISICAL_API_URL" -- turbo run build --filter=website...
 
 
