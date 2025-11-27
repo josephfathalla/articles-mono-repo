@@ -38,10 +38,15 @@ ARG INFISICAL_MACHINE_CLIENT_SECRET
 ARG INFISICAL_PROJECT_ID
 ARG INFISICAL_SECRET_ENV
 ARG INFISICAL_API_URL
-# Wrap the build command with infisical run
-RUN export INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id="$INFISICAL_MACHINE_CLIENT_ID" --client-secret="$INFISICAL_MACHINE_CLIENT_SECRET" --domain="$INFISICAL_API_URL" --silent --plain ) && \
-    infisical run --token="$INFISICAL_TOKEN" --projectId="$INFISICAL_PROJECT_ID" --env="$INFISICAL_SECRET_ENV" --domain="$INFISICAL_API_URL" -- turbo run build --filter=website...
 
+# 1. Login
+# 2. Export secrets to apps/website/.env
+# 3. Build
+# 4. (Optional) Remove .env if you are paranoid, though it stays in this layer.
+
+RUN export INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id="$INFISICAL_MACHINE_CLIENT_ID" --client-secret="$INFISICAL_MACHINE_CLIENT_SECRET" --domain="$INFISICAL_API_URL" --silent --plain) && \
+    infisical export --token="$INFISICAL_TOKEN" --projectId="$INFISICAL_PROJECT_ID" --env="$INFISICAL_SECRET_ENV" --domain="$INFISICAL_API_URL" --format=dotenv > apps/website/.env && \
+    turbo run build --filter=website...
 
 FROM base AS runner
 WORKDIR /app
