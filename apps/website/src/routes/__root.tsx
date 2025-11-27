@@ -1,3 +1,4 @@
+import { ColorSchemeScript } from "@mantine/core";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
@@ -7,13 +8,16 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import Header from "../components/Header";
+import { authQueries } from "@/services/queries";
 import appCss from "../styles.css?url";
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {
-    // beforeLoad: async ({ context }) => {
-    //   await context.queryClient.ensureQueryData(authQueries.user());
-    // },
+    beforeLoad: async ({ context }) => {
+      const authState = await context.queryClient.ensureQueryData(
+        authQueries.user()
+      );
+      return { authState };
+    },
     head: () => ({
       meta: [
         {
@@ -36,17 +40,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     }),
 
     shellComponent: RootDocument,
+    notFoundComponent: () => <div>Not Found</div>,
   }
 );
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        <ColorSchemeScript />
       </head>
       <body>
-        <Header />
         {children}
         <TanStackDevtools
           config={{
@@ -56,10 +61,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             {
               name: "Tanstack Router",
               render: <TanStackRouterDevtoolsPanel />,
+              defaultOpen: false,
             },
             {
               name: "React Query",
               render: <ReactQueryDevtoolsPanel />,
+              defaultOpen: false,
             },
           ]}
         />

@@ -7,7 +7,21 @@ export const authQueries = {
     queryOptions({
       queryKey: [...authQueries.all, "user"],
       queryFn: async () => {
-        const userSession = await authClient.getSession();
+        let headers: HeadersInit | undefined;
+
+        if (typeof window === "undefined") {
+          const { getRequestHeaders } = await import(
+            "@tanstack/react-start/server"
+          );
+          headers = getRequestHeaders();
+        }
+
+        const userSession = await authClient.getSession({
+          fetchOptions: {
+            headers,
+          },
+        });
+
         if (!userSession) {
           return null;
         }

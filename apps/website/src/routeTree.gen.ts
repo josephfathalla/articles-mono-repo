@@ -9,71 +9,146 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/_auth'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as DemoIndexRouteImport } from './routes/demo/index'
+import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as DemoTodosRouteImport } from './routes/demo/todos'
+import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as AppArticlesIndexRouteImport } from './routes/_app/articles/index'
+import { Route as AppArticlesArticleIdRouteImport } from './routes/_app/articles/$articleId'
 
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
+const AuthRoute = AuthRouteImport.update({
+  id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoIndexRoute = DemoIndexRouteImport.update({
+  id: '/demo/',
+  path: '/demo/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRoute,
 } as any)
 const DemoTodosRoute = DemoTodosRouteImport.update({
   id: '/demo/todos',
   path: '/demo/todos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AppArticlesIndexRoute = AppArticlesIndexRouteImport.update({
+  id: '/articles/',
+  path: '/articles/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppArticlesArticleIdRoute = AppArticlesArticleIdRouteImport.update({
+  id: '/articles/$articleId',
+  path: '/articles/$articleId',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/profile': typeof ProfileRoute
+  '/login': typeof AuthLoginRoute
   '/demo/todos': typeof DemoTodosRoute
+  '/': typeof AppIndexRoute
+  '/demo': typeof DemoIndexRoute
+  '/articles/$articleId': typeof AppArticlesArticleIdRoute
+  '/articles': typeof AppArticlesIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/profile': typeof ProfileRoute
+  '/login': typeof AuthLoginRoute
   '/demo/todos': typeof DemoTodosRoute
+  '/': typeof AppIndexRoute
+  '/demo': typeof DemoIndexRoute
+  '/articles/$articleId': typeof AppArticlesArticleIdRoute
+  '/articles': typeof AppArticlesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/profile': typeof ProfileRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_auth': typeof AuthRouteWithChildren
+  '/_auth/login': typeof AuthLoginRoute
   '/demo/todos': typeof DemoTodosRoute
+  '/_app/': typeof AppIndexRoute
+  '/demo/': typeof DemoIndexRoute
+  '/_app/articles/$articleId': typeof AppArticlesArticleIdRoute
+  '/_app/articles/': typeof AppArticlesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/profile' | '/demo/todos'
+  fullPaths:
+    | '/login'
+    | '/demo/todos'
+    | '/'
+    | '/demo'
+    | '/articles/$articleId'
+    | '/articles'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/profile' | '/demo/todos'
-  id: '__root__' | '/' | '/profile' | '/demo/todos'
+  to:
+    | '/login'
+    | '/demo/todos'
+    | '/'
+    | '/demo'
+    | '/articles/$articleId'
+    | '/articles'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_auth'
+    | '/_auth/login'
+    | '/demo/todos'
+    | '/_app/'
+    | '/demo/'
+    | '/_app/articles/$articleId'
+    | '/_app/articles/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  ProfileRoute: typeof ProfileRoute
+  AppRoute: typeof AppRouteWithChildren
+  AuthRoute: typeof AuthRouteWithChildren
   DemoTodosRoute: typeof DemoTodosRoute
+  DemoIndexRoute: typeof DemoIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/': {
+      id: '/demo/'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/': {
+      id: '/_app/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
     }
     '/demo/todos': {
       id: '/demo/todos'
@@ -82,13 +157,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoTodosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/login': {
+      id: '/_auth/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_app/articles/': {
+      id: '/_app/articles/'
+      path: '/articles'
+      fullPath: '/articles'
+      preLoaderRoute: typeof AppArticlesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/articles/$articleId': {
+      id: '/_app/articles/$articleId'
+      path: '/articles/$articleId'
+      fullPath: '/articles/$articleId'
+      preLoaderRoute: typeof AppArticlesArticleIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppIndexRoute: typeof AppIndexRoute
+  AppArticlesArticleIdRoute: typeof AppArticlesArticleIdRoute
+  AppArticlesIndexRoute: typeof AppArticlesIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppIndexRoute: AppIndexRoute,
+  AppArticlesArticleIdRoute: AppArticlesArticleIdRoute,
+  AppArticlesIndexRoute: AppArticlesIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
+interface AuthRouteChildren {
+  AuthLoginRoute: typeof AuthLoginRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthLoginRoute: AuthLoginRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  ProfileRoute: ProfileRoute,
+  AppRoute: AppRouteWithChildren,
+  AuthRoute: AuthRouteWithChildren,
   DemoTodosRoute: DemoTodosRoute,
+  DemoIndexRoute: DemoIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
