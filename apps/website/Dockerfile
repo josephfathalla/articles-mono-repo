@@ -1,7 +1,8 @@
 FROM node:20-alpine AS base
 
-# Install turbo globally
-RUN npm install -g turbo
+
+# Install turbo and infisical globally
+RUN npm install -g turbo @infisical/cli
 
 FROM base AS builder
 RUN apk add --no-cache libc6-compat
@@ -31,7 +32,10 @@ COPY tsconfig.base.json tsconfig.base.json
 ENV DATABASE_URL="postgresql://dummy:5432/dummy"
 RUN pnpm --filter @my-better-t-app/db exec prisma generate
 
-RUN turbo run build --filter=website...
+# Wrap the build command with infisical run
+RUN export INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id="$INFISICAL_MACHINE_CLIENT_ID" --client-secret="$INFISICAL_MACHINE_CLIENT_SECRET" --silent --plain --domain="$INFISICAL_API_URL") && \
+    infisical run --token="$INFISICAL_TOKEN" --projectId="$INFISICAL_PROJECT_ID" --env="$INFISICAL_SECRET_ENV" --domain="$INFISICAL_API_URL" -- turbo run build --filter=website...
+
 
 FROM base AS runner
 WORKDIR /app

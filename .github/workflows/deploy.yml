@@ -22,10 +22,6 @@ jobs:
             context: apps/backend
             dockerfile: apps/backend/Dockerfile
             image_suffix: -backend
-          # - app: web
-          #   context: apps/web
-          #   dockerfile: apps/web/Dockerfile
-          #   image_suffix: -web
           - app: website
             context: apps/website
             dockerfile: apps/website/Dockerfile
@@ -61,3 +57,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             APP_NAME=${{ matrix.app }}
+            INFISICAL_MACHINE_CLIENT_ID=${{ secrets.INFISICAL_MACHINE_CLIENT_ID }}
+            INFISICAL_MACHINE_CLIENT_SECRET=${{ secrets.INFISICAL_MACHINE_CLIENT_SECRET }}
+            INFISICAL_SECRET_ENV=${{ secrets.INFISICAL_SECRET_ENV }}
+            INFISICAL_API_URL=${{ secrets.INFISICAL_API_URL }}
+            INFISICAL_SECRET_ENV=${{ secrets.INFISICAL_SECRET_ENV }}
