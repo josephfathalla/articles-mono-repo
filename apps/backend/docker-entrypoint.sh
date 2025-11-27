@@ -12,7 +12,6 @@ INFISICAL_TOKEN=$(
     --method=universal-auth \
     --client-id="$INFISICAL_MACHINE_CLIENT_ID" \
     --client-secret="$INFISICAL_MACHINE_CLIENT_SECRET" \
-    --domain="$INFISICAL_API_URL"
     --silent --plain
 )
 
