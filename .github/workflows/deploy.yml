@@ -62,3 +62,4 @@ jobs:
             INFISICAL_SECRET_ENV=${{ secrets.INFISICAL_SECRET_ENV }}
             INFISICAL_API_URL=${{ secrets.INFISICAL_API_URL }}
             INFISICAL_SECRET_ENV=${{ secrets.INFISICAL_SECRET_ENV }}
+            INFISICAL_PROJECT_ID=${{ secrets.INFISICAL_PROJECT_ID }}
