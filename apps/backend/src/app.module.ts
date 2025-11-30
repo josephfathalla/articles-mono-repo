@@ -6,6 +6,7 @@ import { AuthModule } from "@thallesp/nestjs-better-auth";
 import { Querybuilder } from "nestjs-prisma-querybuilder";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
+import { ArticleModule } from "./article/article.module";
 import { DatabaseModule } from "./database/database.module";
 import { QuerybuilderService } from "./database/querybuilder.service";
 import { HealthModule } from "./health/health.module";
@@ -30,6 +31,7 @@ import { TodoModule } from "./todo/todo.module";
 
     DatabaseModule,
     TodoModule,
+    ArticleModule,
     HealthModule,
   ],
   controllers: [AppController],
