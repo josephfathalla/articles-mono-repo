@@ -41,6 +41,12 @@ function RouteComponent() {
               <SignedIn>
                 <UnstyledButton
                   className={classes.control}
+                  renderRoot={(props) => <Link to="/my-articles" {...props} />}
+                >
+                  My Articles
+                </UnstyledButton>
+                <UnstyledButton
+                  className={classes.control}
                   onClick={() => {
                     authClient.signOut({
                       fetchOptions: {

@@ -15,7 +15,9 @@ import { Route as DemoIndexRouteImport } from './routes/demo/index'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as DemoTodosRouteImport } from './routes/demo/todos'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as AppMyArticlesIndexRouteImport } from './routes/_app/my-articles/index'
 import { Route as AppArticlesIndexRouteImport } from './routes/_app/articles/index'
+import { Route as AppMyArticlesAddRouteImport } from './routes/_app/my-articles/add'
 import { Route as AppArticlesArticleIdRouteImport } from './routes/_app/articles/$articleId'
 
 const AuthRoute = AuthRouteImport.update({
@@ -46,9 +48,19 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRoute,
 } as any)
+const AppMyArticlesIndexRoute = AppMyArticlesIndexRouteImport.update({
+  id: '/my-articles/',
+  path: '/my-articles/',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppArticlesIndexRoute = AppArticlesIndexRouteImport.update({
   id: '/articles/',
   path: '/articles/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMyArticlesAddRoute = AppMyArticlesAddRouteImport.update({
+  id: '/my-articles/add',
+  path: '/my-articles/add',
   getParentRoute: () => AppRoute,
 } as any)
 const AppArticlesArticleIdRoute = AppArticlesArticleIdRouteImport.update({
@@ -63,7 +75,9 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/demo': typeof DemoIndexRoute
   '/articles/$articleId': typeof AppArticlesArticleIdRoute
+  '/my-articles/add': typeof AppMyArticlesAddRoute
   '/articles': typeof AppArticlesIndexRoute
+  '/my-articles': typeof AppMyArticlesIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof AuthLoginRoute
@@ -71,7 +85,9 @@ export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/demo': typeof DemoIndexRoute
   '/articles/$articleId': typeof AppArticlesArticleIdRoute
+  '/my-articles/add': typeof AppMyArticlesAddRoute
   '/articles': typeof AppArticlesIndexRoute
+  '/my-articles': typeof AppMyArticlesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -82,7 +98,9 @@ export interface FileRoutesById {
   '/_app/': typeof AppIndexRoute
   '/demo/': typeof DemoIndexRoute
   '/_app/articles/$articleId': typeof AppArticlesArticleIdRoute
+  '/_app/my-articles/add': typeof AppMyArticlesAddRoute
   '/_app/articles/': typeof AppArticlesIndexRoute
+  '/_app/my-articles/': typeof AppMyArticlesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -92,7 +110,9 @@ export interface FileRouteTypes {
     | '/'
     | '/demo'
     | '/articles/$articleId'
+    | '/my-articles/add'
     | '/articles'
+    | '/my-articles'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -100,7 +120,9 @@ export interface FileRouteTypes {
     | '/'
     | '/demo'
     | '/articles/$articleId'
+    | '/my-articles/add'
     | '/articles'
+    | '/my-articles'
   id:
     | '__root__'
     | '/_app'
@@ -110,7 +132,9 @@ export interface FileRouteTypes {
     | '/_app/'
     | '/demo/'
     | '/_app/articles/$articleId'
+    | '/_app/my-articles/add'
     | '/_app/articles/'
+    | '/_app/my-articles/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -164,11 +188,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_app/my-articles/': {
+      id: '/_app/my-articles/'
+      path: '/my-articles'
+      fullPath: '/my-articles'
+      preLoaderRoute: typeof AppMyArticlesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/articles/': {
       id: '/_app/articles/'
       path: '/articles'
       fullPath: '/articles'
       preLoaderRoute: typeof AppArticlesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/my-articles/add': {
+      id: '/_app/my-articles/add'
+      path: '/my-articles/add'
+      fullPath: '/my-articles/add'
+      preLoaderRoute: typeof AppMyArticlesAddRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/articles/$articleId': {
@@ -184,13 +222,17 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
   AppArticlesArticleIdRoute: typeof AppArticlesArticleIdRoute
+  AppMyArticlesAddRoute: typeof AppMyArticlesAddRoute
   AppArticlesIndexRoute: typeof AppArticlesIndexRoute
+  AppMyArticlesIndexRoute: typeof AppMyArticlesIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppIndexRoute: AppIndexRoute,
   AppArticlesArticleIdRoute: AppArticlesArticleIdRoute,
+  AppMyArticlesAddRoute: AppMyArticlesAddRoute,
   AppArticlesIndexRoute: AppArticlesIndexRoute,
+  AppMyArticlesIndexRoute: AppMyArticlesIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
