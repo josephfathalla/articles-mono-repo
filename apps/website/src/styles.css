@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@mantine/core/styles.css";
+@import "@mantine/notifications/styles.css";
 body {
   @apply m-0;
   font-family:

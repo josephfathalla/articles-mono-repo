@@ -1,8 +1,10 @@
-import { AppShell, Burger, Group, Title, UnstyledButton } from "@mantine/core";
+import { AppShell, Burger, Group, UnstyledButton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { SignedIn } from "@/components/auth/signed-in";
 import { SignedOut } from "@/components/auth/signed-out";
+import { authClient } from "@/utils/auth/auth-client";
+import { queryClient } from "@/utils/orpc";
 import classes from "./MobileNavbar.module.css";
 
 export const Route = createFileRoute("/_app")({
@@ -39,7 +41,15 @@ function RouteComponent() {
               <SignedIn>
                 <UnstyledButton
                   className={classes.control}
-                  renderRoot={(props) => <Link to="/logout" {...props} />}
+                  onClick={() => {
+                    authClient.signOut({
+                      fetchOptions: {
+                        onSuccess: () => {
+                          queryClient.invalidateQueries();
+                        },
+                      },
+                    });
+                  }}
                 >
                   Logout
                 </UnstyledButton>
@@ -48,16 +58,6 @@ function RouteComponent() {
           </Group>
         </Group>
       </AppShell.Header>
-
-      <AppShell.Navbar px={4} py="md">
-        <UnstyledButton
-          className={classes.control}
-          renderRoot={(props) => <Link to="/login" {...props} />}
-        >
-          Login
-        </UnstyledButton>
-        <Title order={2}>awdawd</Title>
-      </AppShell.Navbar>
 
       <AppShell.Main>
         <Outlet />

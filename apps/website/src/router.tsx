@@ -1,4 +1,5 @@
 import { MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { createRouter } from "@tanstack/react-router";
 import { theme } from "./components/theme";
@@ -15,7 +16,10 @@ export const getRouter = () => {
     context: { queryClient },
     Wrap: ({ children }) => (
       <QueryClientProvider client={queryClient}>
-        <MantineProvider theme={theme}>{children}</MantineProvider>
+        <MantineProvider theme={theme}>
+          <Notifications />
+          {children}
+        </MantineProvider>
       </QueryClientProvider>
     ),
   });
