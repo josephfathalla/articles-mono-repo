@@ -28,7 +28,7 @@ function RouteComponent() {
         <Group h="100%" px="md">
           <Burger hiddenFrom="sm" onClick={toggle} opened={opened} size="sm" />
           <Group justify="space-between" style={{ flex: 1 }}>
-            Determinds
+            <Link to="/">Determinds</Link>
             <Group gap={0} ml="xl" visibleFrom="sm">
               <SignedOut>
                 <UnstyledButton
