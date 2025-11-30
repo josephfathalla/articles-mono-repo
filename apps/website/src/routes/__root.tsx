@@ -1,5 +1,6 @@
 import { ColorSchemeScript } from "@mantine/core";
 import { TanStackDevtools } from "@tanstack/react-devtools";
+import { formDevtoolsPlugin } from "@tanstack/react-form-devtools";
 import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import {
@@ -9,6 +10,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { authQueries } from "@/services/queries";
+
 import appCss from "../styles.css?url";
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {
@@ -68,6 +70,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
               render: <ReactQueryDevtoolsPanel />,
               defaultOpen: false,
             },
+            formDevtoolsPlugin(),
           ]}
         />
         <Scripts />
