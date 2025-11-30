@@ -18,9 +18,7 @@ export class ArticleService {
 
   async listAll() {
     const { query, meta } = await this.qb.query({ model: "Article" });
-    console.log(JSON.stringify(query, null, 2));
     const data = await this.databaseService.prisma.article.findMany(query);
-    console.log(JSON.stringify(data, null, 2));
     return { data, meta };
   }
 
@@ -31,7 +29,6 @@ export class ArticleService {
       mergeWhere: true,
     });
     const data = await this.databaseService.prisma.article.findMany(query);
-    console.log(data);
     return { data, meta };
   }
 

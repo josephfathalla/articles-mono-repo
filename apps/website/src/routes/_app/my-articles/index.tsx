@@ -15,12 +15,11 @@ function RouteComponent() {
         page: "1",
         limit: "10",
         select: "all",
-        sort: { field: "title", criteria: "asc" },
+        sort: { field: "createdAt", criteria: "asc" },
         filter: [{ path: "title", operator: "contains", value: "awd" }],
       },
     })
   );
-  console.log(JSON.stringify(articles.data, null, 2));
   return (
     <Flex direction="column" py="xl">
       <Group justify="space-between">
