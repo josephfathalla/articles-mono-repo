@@ -413,6 +413,9 @@ importers:
       tailwindcss:
         specifier: ^4.0.6
         version: 4.1.16
+      tanstack-table-search-params:
+        specifier: ^0.12.1
+        version: 0.12.1(@tanstack/react-table@8.20.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)
       vite-tsconfig-paths:
         specifier: ^5.1.4
         version: 5.1.4(typescript@5.9.3)(vite@7.2.4(@types/node@22.18.13)(jiti@2.6.1)(lightningcss@1.30.2)(sugarss@5.0.1(postcss@8.5.6))(terser@5.44.0)(tsx@4.20.6))
@@ -7303,6 +7306,12 @@ packages:
 
   tailwindcss@4.1.16:
     resolution: {integrity: sha512-pONL5awpaQX4LN5eiv7moSiSPd/DLDzKVRJz8Q9PgzmAdd1R4307GQS2ZpfiN7ZmekdQrfhZZiSE5jkLR4WNaA==}
+
+  tanstack-table-search-params@0.12.1:
+    resolution: {integrity: sha512-63c32j3pWK6kYETPF6ZZsyNUnP6KH7SnQQUYGIttDso6KQTKuvJ683OXknfr0a+botmaZshcnUPs/whYe/LyTA==}
+    peerDependencies:
+      '@tanstack/react-table': '>=8.21.3'
+      react: '>=19.2.0'
 
   tapable@2.3.0:
     resolution: {integrity: sha512-g9ljZiwki/LfxmQADO3dEY1CbpmXT5Hm2fJ+QaGKwSXUylMybePR7/67YW7jOrrvjEgL1Fmz5kzyAjWVWLlucg==}
@@ -16032,6 +16041,11 @@ snapshots:
   tailwind-merge@3.3.1: {}
 
   tailwindcss@4.1.16: {}
+
+  tanstack-table-search-params@0.12.1(@tanstack/react-table@8.20.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0):
+    dependencies:
+      '@tanstack/react-table': 8.20.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      react: 19.2.0
 
   tapable@2.3.0: {}
 

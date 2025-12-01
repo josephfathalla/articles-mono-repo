@@ -2,22 +2,56 @@ import { Button, Flex, Group, Title } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { useTableSearchParams } from "tanstack-table-search-params";
+import { z } from "zod";
 import { orpc } from "@/utils/orpc";
 
 export const Route = createFileRoute("/_app/my-articles/")({
   component: RouteComponent,
+  validateSearch: z.object({
+    page: z.string().default("1"),
+    limit: z.string().default("10"),
+  }),
 });
 
 function RouteComponent() {
+  const navigate = Route.useNavigate();
+  const query = Route.useSearch();
+
+  const stateAndOnChanges = useTableSearchParams(
+    {
+      replace: (url) => {
+        const searchParams = new URLSearchParams(url.split("?")[1]);
+        navigate({
+          search: Object.fromEntries(searchParams.entries()),
+          replace: true,
+        });
+      },
+      query,
+      pathname: Route.path,
+    },
+    {
+      paramNames: {
+        sorting: "sort",
+        pagination: {
+          pageIndex: "page",
+          pageSize: "limit",
+        },
+      },
+    }
+  );
+
+  const [page, setPage] = useState(1);
+
   const articles = useQuery(
     orpc.article.listMy.queryOptions({
       input: {
-        page: "1",
-        limit: "10",
+        page: `${query?.page ?? 1}`,
+        limit: `${query?.limit ?? 10}`,
         select: "all",
         sort: { field: "createdAt", criteria: "asc" },
-        filter: [{ path: "title", operator: "contains", value: "awd" }],
+        // filter: [{ path: "title", operator: "contains", value: "awd" }],
       },
     })
   );
@@ -37,13 +71,18 @@ function RouteComponent() {
 
   const table = useMantineReactTable({
     columns,
+    ...stateAndOnChanges,
     initialState: {
       showGlobalFilter: true,
       density: "xs",
     },
+    state: {
+      ...stateAndOnChanges.state,
+      isLoading: articles.isLoading,
+    },
+    manualFiltering: true,
     manualPagination: true,
     manualSorting: true,
-    manualFiltering: true,
     rowCount: articles.data?.meta.pagination.total ?? 0,
     enableRowSelection: true,
     // enableRowActions: true,
@@ -57,6 +96,10 @@ function RouteComponent() {
           renderRoot={(props) => <Link to="/my-articles/add" {...props} />}
         >
           Create Article
+        </Button>
+        <Button onClick={() => setPage(page + 1)}>Next Page {page}</Button>
+        <Button disabled={page === 1} onClick={() => setPage(page - 1)}>
+          Previous Page {page}
         </Button>
       </Group>
 

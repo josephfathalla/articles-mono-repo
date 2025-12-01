@@ -45,6 +45,7 @@
     "react-dom": "^19.2.0",
     "recharts": "^3.5.0",
     "tailwindcss": "^4.0.6",
+    "tanstack-table-search-params": "^0.12.1",
     "vite-tsconfig-paths": "^5.1.4",
     "zod": "catalog:"
   },
