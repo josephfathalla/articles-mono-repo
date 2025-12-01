@@ -21,12 +21,15 @@ export class ArticleController {
 
   @Implement(contract.article.listMy)
   listMy() {
-    return implement(contract.article.listMy).handler(({ context }) => {
+    return implement(contract.article.listMy).handler(({ context, input }) => {
       const user = (context as any).request.user;
       if (!user) {
         throw new UnauthorizedException("You must be logged in");
       }
-      return this.articleService.listMy(user.id);
+      return this.articleService.listMy({
+        userId: user.id,
+        search: input.search,
+      });
     });
   }
 

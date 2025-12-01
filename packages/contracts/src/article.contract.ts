@@ -105,7 +105,9 @@ export const listMyArticlesContract = oc
       "createdAt",
       "updatedAt",
       "isPublished",
-    ])
+    ]).extend({
+      search: z.string().optional(),
+    })
   )
   .output(
     z.object({

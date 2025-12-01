@@ -19,6 +19,7 @@ const orders = ["asc", "desc"] as const;
 export const Route = createFileRoute("/_app/my-articles/")({
   component: RouteComponent,
   validateSearch: z.object({
+    search: z.string().optional(),
     page: z.string().default("1"),
     limit: z.string().default("10"),
     sort: z
@@ -45,6 +46,7 @@ function RouteComponent() {
     },
     {
       paramNames: {
+        globalFilter: "search",
         sorting: "sort",
         pagination: {
           pageIndex: "page",
@@ -57,6 +59,7 @@ function RouteComponent() {
   const articles = useQuery(
     orpc.article.listMy.queryOptions({
       input: {
+        search: query?.search ?? "",
         page: `${query?.page ?? 1}`,
         limit: `${query?.limit ?? 10}`,
         select: "all",

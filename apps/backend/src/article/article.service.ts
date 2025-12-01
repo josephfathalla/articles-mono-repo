@@ -26,10 +26,16 @@ export class ArticleService {
     return { data, meta };
   }
 
-  async listMy(userId: string) {
+  async listMy({ userId, search }: { userId: string; search?: string }) {
     const { query, meta } = await this.qb.query({
       model: "Article",
-      where: { userId },
+      where: {
+        userId,
+        OR: [
+          { title: { contains: search ?? "", mode: "insensitive" } },
+          { description: { contains: search ?? "", mode: "insensitive" } },
+        ],
+      },
       mergeWhere: true,
     });
     const data = await this.databaseService.prisma.article.findMany(query);
