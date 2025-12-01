@@ -17,7 +17,11 @@ export class ArticleService {
   }
 
   async listAll() {
-    const { query, meta } = await this.qb.query({ model: "Article" });
+    const { query, meta } = await this.qb.query({
+      model: "Article",
+      where: { isPublished: true },
+      mergeWhere: true,
+    });
     const data = await this.databaseService.prisma.article.findMany(query);
     return { data, meta };
   }
@@ -32,7 +36,10 @@ export class ArticleService {
     return { data, meta };
   }
 
-  async create(userId: string, data: { title: string; description: string }) {
+  async create(
+    userId: string,
+    data: { title: string; description: string; isPublished: boolean }
+  ) {
     return await this.databaseService.prisma.article.create({
       data: {
         ...data,
@@ -44,7 +51,7 @@ export class ArticleService {
   async update(
     userId: string,
     id: string,
-    data: { title?: string; description?: string }
+    data: { title?: string; description?: string; isPublished: boolean }
   ) {
     const article = await this.databaseService.prisma.article.findUnique({
       where: { id },

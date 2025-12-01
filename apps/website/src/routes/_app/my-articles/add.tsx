@@ -5,6 +5,7 @@ import {
   Group,
   LoadingOverlay,
   Stack,
+  Switch,
   Textarea,
   TextInput,
   Title,
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/_app/my-articles/add")({
 const articleFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
+  isPublished: z.boolean().default(false),
 });
 
 function RouteComponent() {
@@ -33,6 +35,7 @@ function RouteComponent() {
     defaultValues: {
       title: "",
       description: "",
+      isPublished: false,
     },
     validators: {
       onSubmit: articleFormSchema,
@@ -108,6 +111,22 @@ function RouteComponent() {
                     placeholder="Enter article description"
                     value={fieldState.value}
                     withAsterisk
+                  />
+                )}
+              </Field>
+
+              <Field name="isPublished">
+                {({ state: fieldState, handleChange, handleBlur }) => (
+                  <Switch
+                    checked={fieldState.value}
+                    error={
+                      fieldState.meta.errors.length > 0
+                        ? fieldState.meta.errors[0]?.message
+                        : undefined
+                    }
+                    label="Publish Article"
+                    onBlur={handleBlur}
+                    onChange={(e) => handleChange(e.currentTarget.checked)}
                   />
                 )}
               </Field>

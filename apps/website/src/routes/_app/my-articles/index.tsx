@@ -1,4 +1,4 @@
-import { Button, Flex, Group, Title } from "@mantine/core";
+import { Badge, Button, Flex, Group, Title } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
@@ -7,7 +7,13 @@ import { useTableSearchParams } from "tanstack-table-search-params";
 import { z } from "zod";
 import { orpc } from "@/utils/orpc";
 
-const fields = ["title", "description", "createdAt", "updatedAt"] as const;
+const fields = [
+  "title",
+  "description",
+  "createdAt",
+  "updatedAt",
+  "isPublished",
+] as const;
 const orders = ["asc", "desc"] as const;
 
 export const Route = createFileRoute("/_app/my-articles/")({
@@ -70,6 +76,15 @@ function RouteComponent() {
     () => [
       { accessorKey: "title", header: "Title" },
       { accessorKey: "description", header: "Description" },
+      {
+        accessorKey: "isPublished",
+        header: "Status",
+        Cell: ({ cell }) => (
+          <Badge color={cell.getValue<boolean>() ? "green" : "gray"}>
+            {cell.getValue<boolean>() ? "Published" : "Draft"}
+          </Badge>
+        ),
+      },
       {
         accessorKey: "createdAt",
         header: "Created At",

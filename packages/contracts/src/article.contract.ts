@@ -6,6 +6,7 @@ export const ArticleSchema = z.object({
   id: z.string(),
   title: z.string(),
   description: z.string(),
+  isPublished: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
   userId: z.string(),
@@ -19,7 +20,9 @@ export const createArticleContract = oc
     summary: "Create a new article",
     description: "Creates a new article. Requires authentication.",
   })
-  .input(ArticleSchema.pick({ title: true, description: true }))
+  .input(
+    ArticleSchema.pick({ title: true, description: true, isPublished: true })
+  )
   .output(ArticleSchema);
 
 export const updateArticleContract = oc
@@ -31,7 +34,14 @@ export const updateArticleContract = oc
     description:
       "Updates an existing article. Only the creator can update their article.",
   })
-  .input(ArticleSchema.pick({ id: true, title: true, description: true }))
+  .input(
+    ArticleSchema.pick({
+      id: true,
+      title: true,
+      description: true,
+      isPublished: true,
+    })
+  )
   .output(ArticleSchema);
 
 export const listArticleContract = oc
@@ -42,7 +52,14 @@ export const listArticleContract = oc
     summary: "List all articles",
     description: "Lists all articles from all users. Public access.",
   })
-  .input(createQueryBuilderSchema(["title", "description", "createdAt"]))
+  .input(
+    createQueryBuilderSchema([
+      "title",
+      "description",
+      "createdAt",
+      "isPublished",
+    ])
+  )
   .output(
     z.object({
       data: z.array(
@@ -50,6 +67,7 @@ export const listArticleContract = oc
           id: z.string(),
           title: z.string().optional(),
           description: z.string().optional(),
+          isPublished: z.boolean().optional(),
           createdAt: z.date().optional(),
           updatedAt: z.date().optional(),
           userId: z.string().optional(),
@@ -81,7 +99,13 @@ export const listMyArticlesContract = oc
     description: "Lists articles created by the currently logged-in user.",
   })
   .input(
-    createQueryBuilderSchema(["title", "description", "createdAt", "updatedAt"])
+    createQueryBuilderSchema([
+      "title",
+      "description",
+      "createdAt",
+      "updatedAt",
+      "isPublished",
+    ])
   )
   .output(
     z.object({
@@ -90,6 +114,7 @@ export const listMyArticlesContract = oc
           id: z.string(),
           title: z.string().optional(),
           description: z.string().optional(),
+          isPublished: z.boolean().optional(),
           createdAt: z.date().optional(),
           updatedAt: z.date().optional(),
           userId: z.string().optional(),
