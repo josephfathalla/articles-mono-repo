@@ -8,7 +8,7 @@ import {
   type MRT_Cell,
   type MRT_ColumnDef,
   useMantineReactTable,
-} from "mantine-react-table";
+} from "mantine-react-table-open";
 import { useMemo } from "react";
 import { useTableSearchParams } from "tanstack-table-search-params";
 import { z } from "zod";
@@ -80,8 +80,6 @@ function RouteComponent() {
     }
   );
 
-  console.log(stateAndOnChanges.state?.columnFilters);
-
   const articles = useQuery(
     orpc.article.listMy.queryOptions({
       input: {
@@ -103,7 +101,6 @@ function RouteComponent() {
               fieldsTypesMapping[
                 filter.id as keyof typeof fieldsTypesMapping
               ] ?? "string";
-
             if (type === "string") {
               return [
                 {
@@ -143,6 +140,7 @@ function RouteComponent() {
                   filterGroup: "and",
                 });
               }
+
               return filterReturn;
             }
 
@@ -163,7 +161,6 @@ function RouteComponent() {
       {
         accessorKey: "description",
         header: "Description",
-        enableColumnFilter: false,
       },
       {
         accessorKey: "isPublished",
@@ -199,6 +196,7 @@ function RouteComponent() {
       ...stateAndOnChanges.state,
       isLoading: articles.isLoading,
     },
+    // paginationDisplayMode: "",
     manualFiltering: true,
     manualPagination: true,
     manualSorting: true,
