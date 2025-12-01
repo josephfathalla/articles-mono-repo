@@ -7,11 +7,17 @@ import { useTableSearchParams } from "tanstack-table-search-params";
 import { z } from "zod";
 import { orpc } from "@/utils/orpc";
 
+const fields = ["title", "description", "createdAt", "updatedAt"] as const;
+const orders = ["asc", "desc"] as const;
+
 export const Route = createFileRoute("/_app/my-articles/")({
   component: RouteComponent,
   validateSearch: z.object({
     page: z.string().default("1"),
     limit: z.string().default("10"),
+    sort: z
+      .enum([...fields.flatMap((f) => orders.map((o) => `${f}.${o}` as const))])
+      .default("createdAt.desc"),
   }),
 });
 
@@ -48,7 +54,13 @@ function RouteComponent() {
         page: `${query?.page ?? 1}`,
         limit: `${query?.limit ?? 10}`,
         select: "all",
-        sort: { field: "createdAt", criteria: "asc" },
+        sort: {
+          field: (query?.sort?.split(".")[0] ??
+            "createdAt") as (typeof fields)[number],
+
+          criteria: (query?.sort?.split(".")[1] ??
+            "desc") as (typeof orders)[number],
+        },
         // filter: [{ path: "title", operator: "contains", value: "awd" }],
       },
     })

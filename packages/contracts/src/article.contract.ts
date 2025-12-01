@@ -80,7 +80,9 @@ export const listMyArticlesContract = oc
     summary: "List my articles",
     description: "Lists articles created by the currently logged-in user.",
   })
-  .input(createQueryBuilderSchema(["title", "description", "createdAt"]))
+  .input(
+    createQueryBuilderSchema(["title", "description", "createdAt", "updatedAt"])
+  )
   .output(
     z.object({
       data: z.array(
