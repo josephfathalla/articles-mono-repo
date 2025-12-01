@@ -1,4 +1,5 @@
-import { Badge, Button, Flex, Group, Title } from "@mantine/core";
+import { Badge, Button, Flex, Group, TextInput, Title } from "@mantine/core";
+import { DatePickerInput } from "@mantine/dates";
 import type { contract } from "@my-better-t-app/contracts";
 import type { InferContractRouterOutputs } from "@orpc/contract";
 import { useQuery } from "@tanstack/react-query";
@@ -161,6 +162,7 @@ function RouteComponent() {
       {
         accessorKey: "description",
         header: "Description",
+        enableColumnFilter: false,
       },
       {
         accessorKey: "isPublished",
@@ -214,6 +216,31 @@ function RouteComponent() {
         >
           Create Article
         </Button>
+      </Group>
+      <Group>
+        <TextInput
+          onChange={(e) =>
+            table.getColumn("description").setFilterValue(e.currentTarget.value)
+          }
+          placeholder="Filter description"
+          value={
+            (table.getColumn("description").getFilterValue() as string) ?? ""
+          }
+        />
+        <DatePickerInput
+          clearable
+          onChange={(value) =>
+            table.getColumn("createdAt").setFilterValue(value)
+          }
+          placeholder="Filter created at"
+          type="range"
+          value={
+            (table.getColumn("createdAt").getFilterValue() as [
+              Date | null,
+              Date | null,
+            ]) ?? [null, null]
+          }
+        />
       </Group>
       <MantineReactTable table={table} />
     </Flex>
