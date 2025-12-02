@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createFilterSchema } from "./FilterQueryBuilder";
+import { createPopulateSchema } from "./PopulateQueryBuilder";
 import { createSortSchema } from "./SortQueryBuilder";
 
 const defaultPaginationFields = ["id"] as const;
@@ -15,6 +16,7 @@ export const createQueryBuilderSchema = <
     select: z.string().optional().default("all"),
     sort: createSortSchema(fields).optional(),
     filter: createFilterSchema(fields).optional(),
+    populate: createPopulateSchema().optional(),
   });
 
 export const QueryBuilderSchema = createQueryBuilderSchema(

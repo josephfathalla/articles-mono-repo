@@ -16,6 +16,16 @@ INFISICAL_TOKEN=$(
     --silent --plain
 )
 
+# Run database migrations
+cd /app/packages/db
+exec infisical run \
+ --token "$INFISICAL_TOKEN" \
+ --projectId "$INFISICAL_PROJECT_ID" \
+ --env "$INFISICAL_SECRET_ENV" \
+ --domain "$INFISICAL_API_URL" \
+ -- sh -c "npx prisma migrate deploy"
+cd /app
+
 # 2) Inject secrets and run your app
 # Website vs backend get distinguished by INFISICAL_ENV or path in Infisical
 APP_CMD=${APP_CMD:-"node /app/apps/backend/dist/main.js"}  # override per service via env

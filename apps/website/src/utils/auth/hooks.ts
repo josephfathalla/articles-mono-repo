@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { authQueries } from "@/services/queries";
 
 export const useAuthentication = () => {
-  const { data: userSession } = useQuery(authQueries.user());
+  const { data: userSession } = useSuspenseQuery(authQueries.user());
   return { userSession, isAuthenticated: !!userSession?.user };
 };
 
