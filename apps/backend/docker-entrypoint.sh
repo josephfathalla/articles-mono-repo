@@ -18,7 +18,7 @@ INFISICAL_TOKEN=$(
 
 # Run database migrations
 cd /app/packages/db
-exec infisical run \
+infisical run \
  --token "$INFISICAL_TOKEN" \
  --projectId "$INFISICAL_PROJECT_ID" \
  --env "$INFISICAL_SECRET_ENV" \
