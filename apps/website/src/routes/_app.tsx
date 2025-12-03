@@ -65,6 +65,39 @@ function RouteComponent() {
         </Group>
       </AppShell.Header>
 
+      <AppShell.Navbar px={4} py="md">
+        <SignedOut>
+          <UnstyledButton
+            className={classes.control}
+            renderRoot={(props) => <Link to="/login" {...props} />}
+          >
+            Login
+          </UnstyledButton>
+        </SignedOut>
+        <SignedIn>
+          <UnstyledButton
+            className={classes.control}
+            renderRoot={(props) => <Link to="/my-articles" {...props} />}
+          >
+            My Articles
+          </UnstyledButton>
+          <UnstyledButton
+            className={classes.control}
+            onClick={() => {
+              authClient.signOut({
+                fetchOptions: {
+                  onSuccess: () => {
+                    queryClient.invalidateQueries();
+                  },
+                },
+              });
+            }}
+          >
+            Logout
+          </UnstyledButton>
+        </SignedIn>
+      </AppShell.Navbar>
+
       <AppShell.Main>
         <Outlet />
       </AppShell.Main>
