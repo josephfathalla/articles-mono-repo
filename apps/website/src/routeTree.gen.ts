@@ -11,9 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as AppRouteImport } from './routes/_app'
-import { Route as DemoIndexRouteImport } from './routes/demo/index'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
-import { Route as DemoTodosRouteImport } from './routes/demo/todos'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AppMyArticlesIndexRouteImport } from './routes/_app/my-articles/index'
 import { Route as AppArticlesIndexRouteImport } from './routes/_app/articles/index'
@@ -28,20 +26,10 @@ const AppRoute = AppRouteImport.update({
   id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoIndexRoute = DemoIndexRouteImport.update({
-  id: '/demo/',
-  path: '/demo/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRoute,
-} as any)
-const DemoTodosRoute = DemoTodosRouteImport.update({
-  id: '/demo/todos',
-  path: '/demo/todos',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/login',
@@ -71,9 +59,7 @@ const AppArticlesArticleIdRoute = AppArticlesArticleIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/login': typeof AuthLoginRoute
-  '/demo/todos': typeof DemoTodosRoute
   '/': typeof AppIndexRoute
-  '/demo': typeof DemoIndexRoute
   '/articles/$articleId': typeof AppArticlesArticleIdRoute
   '/my-articles/add': typeof AppMyArticlesAddRoute
   '/articles': typeof AppArticlesIndexRoute
@@ -81,9 +67,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/login': typeof AuthLoginRoute
-  '/demo/todos': typeof DemoTodosRoute
   '/': typeof AppIndexRoute
-  '/demo': typeof DemoIndexRoute
   '/articles/$articleId': typeof AppArticlesArticleIdRoute
   '/my-articles/add': typeof AppMyArticlesAddRoute
   '/articles': typeof AppArticlesIndexRoute
@@ -94,9 +78,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
-  '/demo/todos': typeof DemoTodosRoute
   '/_app/': typeof AppIndexRoute
-  '/demo/': typeof DemoIndexRoute
   '/_app/articles/$articleId': typeof AppArticlesArticleIdRoute
   '/_app/my-articles/add': typeof AppMyArticlesAddRoute
   '/_app/articles/': typeof AppArticlesIndexRoute
@@ -106,9 +88,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/login'
-    | '/demo/todos'
     | '/'
-    | '/demo'
     | '/articles/$articleId'
     | '/my-articles/add'
     | '/articles'
@@ -116,9 +96,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
-    | '/demo/todos'
     | '/'
-    | '/demo'
     | '/articles/$articleId'
     | '/my-articles/add'
     | '/articles'
@@ -128,9 +106,7 @@ export interface FileRouteTypes {
     | '/_app'
     | '/_auth'
     | '/_auth/login'
-    | '/demo/todos'
     | '/_app/'
-    | '/demo/'
     | '/_app/articles/$articleId'
     | '/_app/my-articles/add'
     | '/_app/articles/'
@@ -140,8 +116,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
-  DemoTodosRoute: typeof DemoTodosRoute
-  DemoIndexRoute: typeof DemoIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -160,26 +134,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/': {
-      id: '/demo/'
-      path: '/demo'
-      fullPath: '/demo'
-      preLoaderRoute: typeof DemoIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_app/': {
       id: '/_app/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
-    }
-    '/demo/todos': {
-      id: '/demo/todos'
-      path: '/demo/todos'
-      fullPath: '/demo/todos'
-      preLoaderRoute: typeof DemoTodosRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/_auth/login': {
       id: '/_auth/login'
@@ -250,8 +210,6 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
-  DemoTodosRoute: DemoTodosRoute,
-  DemoIndexRoute: DemoIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
