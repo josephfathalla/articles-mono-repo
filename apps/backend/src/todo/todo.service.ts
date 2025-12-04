@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { QuerybuilderService } from "src/database/querybuilder.service";
 import { DatabaseService } from "../database/database.service";
+import { QuerybuilderService } from "../database/querybuilder.service";
 
 @Injectable()
 export class TodoService {

@@ -16,6 +16,16 @@ jest.mock(
 );
 
 jest.mock(
+  "@thallesp/nestjs-better-auth",
+  () => ({
+    AllowAnonymous: () => () => {
+      return;
+    },
+  }),
+  { virtual: true }
+);
+
+jest.mock(
   "@my-better-t-app/contracts",
   () => ({
     contract: {

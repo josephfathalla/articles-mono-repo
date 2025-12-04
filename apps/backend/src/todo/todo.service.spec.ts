@@ -1,5 +1,6 @@
 import { Test, type TestingModule } from "@nestjs/testing";
 import { DatabaseService } from "../database/database.service";
+import { QuerybuilderService } from "../database/querybuilder.service";
 import { TodoService } from "./todo.service";
 
 describe("TodoService", () => {
@@ -14,12 +15,16 @@ describe("TodoService", () => {
       },
     },
   };
+  const querybuilderServiceMock = {
+    query: jest.fn(),
+  };
 
   beforeEach(async () => {
     databaseServiceMock.prisma.todo.findMany.mockReset();
     databaseServiceMock.prisma.todo.create.mockReset();
     databaseServiceMock.prisma.todo.update.mockReset();
     databaseServiceMock.prisma.todo.delete.mockReset();
+    querybuilderServiceMock.query.mockReset();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -27,6 +32,10 @@ describe("TodoService", () => {
         {
           provide: DatabaseService,
           useValue: databaseServiceMock,
+        },
+        {
+          provide: QuerybuilderService,
+          useValue: querybuilderServiceMock,
         },
       ],
     }).compile();
@@ -40,8 +49,16 @@ describe("TodoService", () => {
 
   it("should list todos using the database service", async () => {
     const todos = [{ id: 1, text: "Test", completed: false }];
+    const meta = {
+      pagination: { total: 1, page: 1, pageSize: 10, pageCount: 1 },
+    };
+
+    // Mock the query builder response
+    querybuilderServiceMock.query.mockResolvedValueOnce({ query: {}, meta });
     databaseServiceMock.prisma.todo.findMany.mockResolvedValueOnce(todos);
-    await expect(service.listTodos()).resolves.toEqual(todos);
+
+    // Expect the result to include data and meta
+    await expect(service.listTodos()).resolves.toEqual({ data: todos, meta });
     expect(databaseServiceMock.prisma.todo.findMany).toHaveBeenCalledTimes(1);
   });
 
