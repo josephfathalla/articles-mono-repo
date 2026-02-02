@@ -217,7 +217,7 @@ function RouteComponent() {
           Create Article
         </Button>
       </Group>
-      <Group>
+      <Group mb={10}>
         <TextInput
           onChange={(e) =>
             table.getColumn("description").setFilterValue(e.currentTarget.value)

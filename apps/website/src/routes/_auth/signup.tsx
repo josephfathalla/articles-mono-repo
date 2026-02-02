@@ -15,7 +15,7 @@ import { z } from "zod";
 import { authClient } from "@/utils/auth/auth-client";
 import classes from "./login.module.css";
 
-export const Route = createFileRoute("/_auth/login")({
+export const Route = createFileRoute("/_auth/signup")({
   component: RouteComponent,
   beforeLoad: ({ context }) => {
     if (context.authState?.user) {
@@ -26,26 +26,35 @@ export const Route = createFileRoute("/_auth/login")({
   },
 });
 
-const loginFormSchema = z.object({
-  email: z.email({ message: "Invalid email" }),
-  password: z
-    .string()
-    .min(2, { message: "Password must be at least 2 character" }),
-});
+const signupFormSchema = z.object({
+    name: z.string(),
+    email: z.email({ message: "Invalid email" }),
+    password: z
+      .string()
+      .min(2, { message: "Password must be at least 2 character" }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 function RouteComponent() {
   const navigate = useNavigate();
   const { Field, handleSubmit, Subscribe } = useForm({
     defaultValues: {
+      name: "",
       email: "",
       password: "",
+      confirmPassword: ""
     },
     validators: {
-      onSubmit: loginFormSchema,
+      onSubmit: signupFormSchema,
     },
     onSubmit: async ({ value }) => {
-      await authClient.signIn.email(
+      await authClient.signUp.email(
         {
+          name: value.name,
           email: value.email,
           password: value.password,
         },
@@ -73,11 +82,11 @@ function RouteComponent() {
   return (
     <Container my={40} size={420}>
       <Title className={classes.title} ta="center">
-        Welcome back!
+        Get Started !!!
       </Title>
 
       <Text className={classes.subtitle}>
-        Do not have an account yet? <Anchor component={Link} to="/signup">Create account</Anchor>
+        Already have an account? <Anchor component={Link} to="/login">Login</Anchor>
       </Text>
       <form
         onSubmit={(e) => {
@@ -87,6 +96,24 @@ function RouteComponent() {
         }}
       >
         <Paper mt={30} p={22} radius="md" shadow="sm" withBorder>
+          <Field name="name">
+            {({ state: fieldState, handleChange, handleBlur }) => (
+              <TextInput
+                defaultValue={fieldState.value}
+                error={
+                  fieldState.meta.errors.length > 0
+                    ? fieldState.meta.errors[0]?.message
+                    : undefined
+                }
+                label="Name"
+                onBlur={handleBlur}
+                onChange={(e) => handleChange(e.target.value)}
+                placeholder="Name"
+                radius="md"
+                required
+              />
+            )}
+          </Field>
           <Field name="email">
             {({ state: fieldState, handleChange, handleBlur }) => (
               <TextInput
@@ -124,6 +151,25 @@ function RouteComponent() {
               />
             )}
           </Field>
+          <Field name="confirmPassword">
+            {({ state: fieldState, handleChange, handleBlur }) => (
+              <PasswordInput
+                defaultValue={fieldState.value}
+                error={
+                  fieldState.meta.errors.length > 0
+                    ? fieldState.meta.errors[0]?.message
+                    : undefined
+                }
+                label="Confirm Password"
+                mt="md"
+                onBlur={handleBlur}
+                onChange={(e) => handleChange(e.target.value)}
+                placeholder="Password"
+                radius="md"
+                required
+              />
+            )}
+          </Field>
           <Subscribe
             selector={(state) => [state.canSubmit, state.isSubmitting]}
           >
@@ -136,7 +182,7 @@ function RouteComponent() {
                 radius="md"
                 type="submit"
               >
-                {isSubmitting ? "Signing in..." : "Sign in"}
+                {isSubmitting ? "Signing Up..." : "Sign up"}
               </Button>
             )}
           </Subscribe>
