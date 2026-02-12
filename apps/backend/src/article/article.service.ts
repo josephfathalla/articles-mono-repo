@@ -16,17 +16,46 @@ export class ArticleService {
     this.qb = qb;
   }
 
-  async listAll() {
+  async listAll({ categoryIds }: { categoryIds?: string[] } = {}) {
     const { query, meta } = await this.qb.query({
       model: "Article",
-      where: { isPublished: true },
+      where: {
+        isPublished: true,
+        ...(categoryIds &&
+          categoryIds.length > 0 && {
+            categories: {
+              some: {
+                id: { in: categoryIds },
+              },
+            },
+          }),
+      },
       mergeWhere: true,
     });
-    const data = await this.databaseService.prisma.article.findMany(query);
+    const data = await this.databaseService.prisma.article.findMany({
+      ...query,
+      include: {
+        categories: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+          },
+        },
+      },
+    });
     return { data, meta };
   }
 
-  async listMy({ userId, search }: { userId: string; search?: string }) {
+  async listMy({
+    userId,
+    search,
+    categoryIds,
+  }: {
+    userId: string;
+    search?: string;
+    categoryIds?: string[];
+  }) {
     const { query, meta } = await this.qb.query({
       model: "Article",
       where: {
@@ -35,21 +64,82 @@ export class ArticleService {
           { title: { contains: search ?? "", mode: "insensitive" } },
           { description: { contains: search ?? "", mode: "insensitive" } },
         ],
+        ...(categoryIds &&
+          categoryIds.length > 0 && {
+            categories: {
+              some: {
+                id: { in: categoryIds },
+              },
+            },
+          }),
       },
       mergeWhere: true,
     });
-    const data = await this.databaseService.prisma.article.findMany(query);
+    const data = await this.databaseService.prisma.article.findMany({
+      ...query,
+      include: {
+        categories: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+          },
+        },
+      },
+    });
     return { data, meta };
+  }
+
+  async getById(id: string) {
+    const article = await this.databaseService.prisma.article.findUnique({
+      where: { id },
+      include: {
+        categories: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+          },
+        },
+      },
+    });
+
+    if (!article) {
+      throw new NotFoundException("Article not found");
+    }
+
+    return article;
   }
 
   async create(
     userId: string,
-    data: { title: string; description: string; isPublished: boolean }
+    data: {
+      title: string;
+      description: string;
+      isPublished: boolean;
+      categoryIds?: string[];
+    }
   ) {
+    const { categoryIds, ...articleData } = data;
     return await this.databaseService.prisma.article.create({
       data: {
-        ...data,
+        ...articleData,
         userId,
+        ...(categoryIds &&
+          categoryIds.length > 0 && {
+            categories: {
+              connect: categoryIds.map((id) => ({ id })),
+            },
+          }),
+      },
+      include: {
+        categories: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+          },
+        },
       },
     });
   }
@@ -57,7 +147,12 @@ export class ArticleService {
   async update(
     userId: string,
     id: string,
-    data: { title?: string; description?: string; isPublished: boolean }
+    data: {
+      title?: string;
+      description?: string;
+      isPublished: boolean;
+      categoryIds?: string[];
+    }
   ) {
     const article = await this.databaseService.prisma.article.findUnique({
       where: { id },
@@ -71,9 +166,55 @@ export class ArticleService {
       throw new ForbiddenException("You can only edit your own articles");
     }
 
+    const { categoryIds, ...articleData } = data;
+
     return await this.databaseService.prisma.article.update({
       where: { id },
-      data,
+      data: {
+        ...articleData,
+        ...(categoryIds !== undefined && {
+          categories: {
+            set: [], // First disconnect all
+            connect: categoryIds.map((id) => ({ id })), // Then connect new ones
+          },
+        }),
+      },
+      include: {
+        categories: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+          },
+        },
+      },
+    });
+  }
+
+  async delete(id: string, userId: string) {
+    const article = await this.databaseService.prisma.article.findUnique({
+      where: { id },
+    });
+
+    if (!article) {
+      throw new NotFoundException("Article not found");
+    }
+
+    if (article.userId !== userId) {
+      throw new ForbiddenException("You can only delete your own articles");
+    }
+
+    return await this.databaseService.prisma.article.delete({
+      where: { id },
+      include: {
+        categories: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+          },
+        },
+      },
     });
   }
 }

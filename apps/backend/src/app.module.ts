@@ -7,6 +7,7 @@ import { Querybuilder } from "nestjs-prisma-querybuilder";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { ArticleModule } from "./article/article.module";
+import { CategoryModule } from "./category/category.module";
 import { DatabaseModule } from "./database/database.module";
 import { QuerybuilderService } from "./database/querybuilder.service";
 import { HealthModule } from "./health/health.module";
@@ -32,6 +33,7 @@ import { TodoModule } from "./todo/todo.module";
     DatabaseModule,
     TodoModule,
     ArticleModule,
+    CategoryModule,
     HealthModule,
   ],
   controllers: [AppController],
