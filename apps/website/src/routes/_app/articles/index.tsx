@@ -6,6 +6,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTableSearchParams } from "tanstack-table-search-params";
 import { z } from "zod";
 import { ArticlesList } from "@/components/article/ArticlesList";
+import { SignedIn } from "@/components/auth/signed-in";
 import { useAuthentication } from "@/utils/auth/hooks";
 import { orpc } from "@/utils/orpc";
 
@@ -173,9 +174,11 @@ function RouteComponent() {
     <Flex direction="column" py="xl">
       <Group justify="space-between" mb="md">
         <Title>Articles</Title>
-        <Button renderRoot={(props) => <Link to="/article/add" {...props} />}>
-          Create Article
-        </Button>
+        <SignedIn>
+          <Button renderRoot={(props) => <Link to="/article/add" {...props} />}>
+            Create Article
+          </Button>
+        </SignedIn>
       </Group>
       <ArticlesList
         categoryOptions={categoryOptions}
