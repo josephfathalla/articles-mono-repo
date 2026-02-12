@@ -10,6 +10,15 @@ export const ArticleSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   userId: z.string(),
+  categories: z
+    .array(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        type: z.enum(["long", "short"]),
+      })
+    )
+    .optional(),
 });
 
 export const createArticleContract = oc
@@ -21,7 +30,11 @@ export const createArticleContract = oc
     description: "Creates a new article. Requires authentication.",
   })
   .input(
-    ArticleSchema.pick({ title: true, description: true, isPublished: true })
+    ArticleSchema.pick({
+      title: true,
+      description: true,
+      isPublished: true,
+    }).extend({ categoryIds: z.array(z.string()).optional() })
   )
   .output(ArticleSchema);
 
@@ -40,7 +53,7 @@ export const updateArticleContract = oc
       title: true,
       description: true,
       isPublished: true,
-    })
+    }).extend({ categoryIds: z.array(z.string()).optional() })
   )
   .output(ArticleSchema);
 
@@ -58,7 +71,9 @@ export const listArticleContract = oc
       "description",
       "createdAt",
       "isPublished",
-    ])
+    ]).extend({
+      categoryIds: z.array(z.string()).optional(),
+    })
   )
   .output(
     z.object({
@@ -76,6 +91,15 @@ export const listArticleContract = oc
               name: z.string().optional(),
               email: z.string().optional(),
             })
+            .optional(),
+          categories: z
+            .array(
+              z.object({
+                id: z.string(),
+                name: z.string(),
+                type: z.enum(["long", "short"]),
+              })
+            )
             .optional(),
         })
       ),
@@ -107,6 +131,7 @@ export const listMyArticlesContract = oc
       "isPublished",
     ]).extend({
       search: z.string().optional(),
+      categoryIds: z.array(z.string()).optional(),
     })
   )
   .output(
@@ -120,6 +145,15 @@ export const listMyArticlesContract = oc
           createdAt: z.date().optional(),
           updatedAt: z.date().optional(),
           userId: z.string().optional(),
+          categories: z
+            .array(
+              z.object({
+                id: z.string(),
+                name: z.string(),
+                type: z.enum(["long", "short"]),
+              })
+            )
+            .optional(),
         })
       ),
       meta: z.object({
@@ -133,9 +167,35 @@ export const listMyArticlesContract = oc
     })
   );
 
+export const deleteArticleContract = oc
+  .route({
+    method: "DELETE",
+    path: "/",
+    tags: ["articles"],
+    summary: "Delete an article",
+    description:
+      "Deletes an article. Only the creator can delete their article.",
+  })
+  .input(ArticleSchema.pick({ id: true }))
+  .output(ArticleSchema);
+
+export const getArticleByIdContract = oc
+  .route({
+    method: "GET",
+    path: "/single-article/:articleId",
+    tags: ["articles"],
+    summary: "Get article by ID",
+    description:
+      "Gets an article by its ID. Only the creator can access their own articles.",
+  })
+  .input(z.object({ articleId: z.string() }))
+  .output(ArticleSchema);
+
 export const article = oc.prefix("/articles").router({
   create: createArticleContract,
   update: updateArticleContract,
   list: listArticleContract,
   listMy: listMyArticlesContract,
+  getById: getArticleByIdContract,
+  delete: deleteArticleContract,
 });
