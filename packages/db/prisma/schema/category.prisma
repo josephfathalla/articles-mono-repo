@@ -1,0 +1,18 @@
+enum CategoryType {
+  long
+  short
+}
+
+model Category {
+  id         String    @id @default(uuid())
+  name       String
+  createdAt  DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  type  CategoryType
+  articles   Article[]
+  createdBy     String
+  createdByUser       User      @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@index([createdBy])
+  @@map("category")
+}

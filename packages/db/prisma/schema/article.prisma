@@ -7,6 +7,7 @@ model Article {
   updatedAt   DateTime @updatedAt
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categories  Category[]
 
   @@map("article")
 }
