@@ -10,7 +10,12 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useForm } from "@tanstack/react-form";
-import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  redirect,
+  useNavigate,
+} from "@tanstack/react-router";
 import { z } from "zod";
 import { authClient } from "@/utils/auth/auth-client";
 import classes from "./login.module.css";
@@ -26,7 +31,8 @@ export const Route = createFileRoute("/_auth/signup")({
   },
 });
 
-const signupFormSchema = z.object({
+const signupFormSchema = z
+  .object({
     name: z.string(),
     email: z.email({ message: "Invalid email" }),
     password: z
@@ -46,7 +52,7 @@ function RouteComponent() {
       name: "",
       email: "",
       password: "",
-      confirmPassword: ""
+      confirmPassword: "",
     },
     validators: {
       onSubmit: signupFormSchema,
@@ -86,7 +92,10 @@ function RouteComponent() {
       </Title>
 
       <Text className={classes.subtitle}>
-        Already have an account? <Anchor component={Link} to="/login">Login</Anchor>
+        Already have an account?{" "}
+        <Anchor component={Link} to="/login">
+          Login
+        </Anchor>
       </Text>
       <form
         onSubmit={(e) => {

@@ -10,7 +10,12 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useForm } from "@tanstack/react-form";
-import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  redirect,
+  useNavigate,
+} from "@tanstack/react-router";
 import { z } from "zod";
 import { authClient } from "@/utils/auth/auth-client";
 import classes from "./login.module.css";
@@ -77,7 +82,10 @@ function RouteComponent() {
       </Title>
 
       <Text className={classes.subtitle}>
-        Do not have an account yet? <Anchor component={Link} to="/signup">Create account</Anchor>
+        Do not have an account yet?{" "}
+        <Anchor component={Link} to="/signup">
+          Create account
+        </Anchor>
       </Text>
       <form
         onSubmit={(e) => {
