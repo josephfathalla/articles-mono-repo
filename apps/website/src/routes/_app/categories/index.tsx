@@ -18,7 +18,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   MantineReactTable,
-  type MRT_Cell,
   type MRT_ColumnDef,
   type MRT_Row,
   useMantineReactTable,
@@ -32,12 +31,9 @@ import { orpc } from "@/utils/orpc";
 
 type Outputs = InferContractRouterOutputs<typeof contract.category.list>;
 type CategoriesOutput = Outputs["data"][number];
-const fields = [
-  "name",
-  "type",
-  "createdAt",
-  "updatedAt",
-] as const satisfies Partial<keyof CategoriesOutput>[];
+const fields = ["name", "type", "createdAt"] as const satisfies Partial<
+  keyof CategoriesOutput
+>[];
 
 const fieldsTypesMapping = {
   name: "string",
@@ -65,8 +61,8 @@ function RouteComponent() {
   const queryClient = useQueryClient();
   const { isAuthenticated } = useAuthentication();
 
-  const statusCell = ({ cell }: { cell: MRT_Cell<CategoriesOutput> }) => {
-    const value = cell.getValue() || "";
+  const statusCell: MRT_ColumnDef<CategoriesOutput>["Cell"] = ({ cell }) => {
+    const value = (cell.getValue<string>() || "") as string;
     return <Badge color={value === "Long" ? "red" : "green"}>{value}</Badge>;
   };
 
@@ -115,64 +111,67 @@ function RouteComponent() {
               fieldsTypesMapping[
                 filter.id as keyof typeof fieldsTypesMapping
               ] ?? "string";
+
             if (type === "string") {
               return [
                 {
                   path: filter.id,
                   type: "string",
                   operator: "contains",
-                  value: filter.value,
+                  value: filter.value as string,
                 },
               ];
             }
+
             if (type === "enum") {
               return [
                 {
                   path: filter.id,
                   type: "string",
-                  operator: "equals", // Use equals for exact match
-                  value: filter.value,
+                  operator: "equals",
+                  value: filter.value as string,
                 },
               ];
             }
+
             if (type === "boolean") {
               return [
                 {
                   path: filter.id,
                   type: "boolean",
-                  value: filter.value,
+                  value: filter.value as boolean,
                 },
               ];
             }
+
             if (type === "date") {
-              const filterReturn = [];
-              if (filter.value[0]) {
+              const [start, end] = filter.value as [Date | null, Date | null];
+              const filterReturn: any[] = [];
+              if (start) {
                 filterReturn.push({
                   path: filter.id,
                   type: "date",
-                  value: filter.value[0],
+                  value: start,
                   operator: "gte",
                   filterGroup: "and",
                 });
               }
-              if (filter.value[1]) {
+              if (end) {
                 filterReturn.push({
                   path: filter.id,
                   type: "date",
-                  value: filter.value[1],
+                  value: end,
                   operator: "lte",
                   filterGroup: "and",
                 });
               }
-
               return filterReturn;
             }
 
-            //Default to string
             return {
               path: filter.id,
               type: "string",
-              value: filter.value,
+              value: filter.value as string,
             };
           }),
       },
@@ -217,7 +216,7 @@ function RouteComponent() {
     });
   };
 
-  const actionCell = ({ row }: { row: MRT_Cell<CategoriesOutput> }) => (
+  const actionCell: MRT_ColumnDef<CategoriesOutput>["Cell"] = ({ row }) => (
     <Menu>
       <Menu.Target>
         <ActionIcon variant="subtle">⋮</ActionIcon>
@@ -231,7 +230,7 @@ function RouteComponent() {
     </Menu>
   );
 
-  const createdByCell = ({ row }: { row: MRT_Cell<CategoriesOutput> }) => (
+  const createdByCell: MRT_ColumnDef<CategoriesOutput>["Cell"] = ({ row }) => (
     <Text>{row.original.createdByUser?.name}</Text>
   );
 
@@ -253,13 +252,13 @@ function RouteComponent() {
       },
       {
         accessorKey: "updatedAt",
-        enableColumnActions: false,
+        enableColumnFilter: false,
         header: "Updated At",
       },
       {
         accessorKey: "CreatedUser",
         header: "Created By",
-        enableColumnActions: false,
+        enableColumnFilter: false,
         Cell: createdByCell,
       },
       ...(isAuthenticated
@@ -293,6 +292,7 @@ function RouteComponent() {
     manualFiltering: false,
     manualPagination: false,
     manualSorting: false,
+    enableColumnActions: false,
     rowCount: categories.data?.meta.pagination.total ?? 0,
     enableRowSelection: true,
   });

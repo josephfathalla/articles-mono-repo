@@ -84,10 +84,10 @@ export function ArticlesList({
       {
         accessorKey: "isPublished",
         header: "Status",
-        filterVariant: "checkbox",
         accessorFn: (row) => (row.isPublished ? "true" : "false"),
         id: "isPublished",
         Cell: StatusCell,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "categories",
@@ -114,7 +114,7 @@ export function ArticlesList({
       {
         accessorKey: "updatedAt",
         header: "Updated At",
-        filterVariant: "date-range" as const,
+        enableColumnFilter: false,
       },
     ],
     [showAuthor]

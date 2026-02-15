@@ -16,7 +16,13 @@ export class ArticleService {
     this.qb = qb;
   }
 
-  async listAll({ categoryIds }: { categoryIds?: string[] } = {}) {
+  async listAll({
+    categoryIds,
+    options,
+  }: {
+    categoryIds?: string[];
+    options?: { includeUser?: boolean };
+  } = {}) {
     const { query, meta } = await this.qb.query({
       model: "Article",
       where: {
@@ -42,6 +48,14 @@ export class ArticleService {
             type: true,
           },
         },
+        ...(options?.includeUser && {
+          user: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+        }),
       },
     });
     return { data, meta };
@@ -90,7 +104,7 @@ export class ArticleService {
     return { data, meta };
   }
 
-  async getById(id: string) {
+  async getById(id: string, options?: { includeUser?: boolean }) {
     const article = await this.databaseService.prisma.article.findUnique({
       where: { id },
       include: {
@@ -101,6 +115,14 @@ export class ArticleService {
             type: true,
           },
         },
+        ...(options?.includeUser && {
+          user: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+        }),
       },
     });
 

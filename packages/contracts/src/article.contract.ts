@@ -179,6 +179,15 @@ export const deleteArticleContract = oc
   .input(ArticleSchema.pick({ id: true }))
   .output(ArticleSchema);
 
+const ArticleWithOptionalUserSchema = ArticleSchema.extend({
+  user: z
+    .object({
+      name: z.string().optional(),
+      email: z.string().optional(),
+    })
+    .optional(),
+});
+
 export const getArticleByIdContract = oc
   .route({
     method: "GET",
@@ -189,7 +198,7 @@ export const getArticleByIdContract = oc
       "Gets an article by its ID. Only the creator can access their own articles.",
   })
   .input(z.object({ articleId: z.string() }))
-  .output(ArticleSchema);
+  .output(ArticleWithOptionalUserSchema);
 
 export const article = oc.prefix("/articles").router({
   create: createArticleContract,

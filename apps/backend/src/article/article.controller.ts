@@ -14,17 +14,24 @@ export class ArticleController {
   @AllowAnonymous()
   @Implement(contract.article.list)
   list() {
-    return implement(contract.article.list).handler(async ({ input }) =>
-      this.articleService.listAll({ categoryIds: input.categoryIds })
-    );
+    return implement(contract.article.list).handler(({ context, input }) => {
+      const user = (context as any).request?.user;
+      return this.articleService.listAll({
+        categoryIds: input.categoryIds,
+        options: { includeUser: !!user },
+      });
+    });
   }
 
   @AllowAnonymous()
   @Implement(contract.article.getById)
   getById() {
-    return implement(contract.article.getById).handler(({ input }) =>
-      this.articleService.getById(input.articleId)
-    );
+    return implement(contract.article.getById).handler(({ context, input }) => {
+      const user = (context as any).request?.user;
+      return this.articleService.getById(input.articleId, {
+        includeUser: !!user,
+      });
+    });
   }
 
   @Implement(contract.article.listMy)

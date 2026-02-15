@@ -122,6 +122,22 @@ function RouteComponent() {
             </Text>
           </Group>
 
+          {isAuthenticated &&
+            (article as { user?: { name?: string; email?: string } }).user && (
+              <Group gap="xs">
+                <Text fw={500} size="sm">
+                  Created by:
+                </Text>
+                <Text size="sm">
+                  {(article as { user?: { name?: string; email?: string } })
+                    .user?.name ??
+                    (article as { user?: { name?: string; email?: string } })
+                      .user?.email ??
+                    "Unknown"}
+                </Text>
+              </Group>
+            )}
+
           {isOwner && (
             <Group mt="md">
               <Button
