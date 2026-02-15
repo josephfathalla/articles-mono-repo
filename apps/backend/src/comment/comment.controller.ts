@@ -21,47 +21,41 @@ export class CommentController {
 
   @Implement(contract.comment.create)
   create() {
-    return implement(contract.comment.create).handler(
-      ({ context, input }) => {
-        const user = (context as { request?: { user?: { id: string } } })
-          .request?.user;
-        if (!user) {
-          throw new UnauthorizedException("You must be logged in");
-        }
-        return this.commentService.create(
-          user.id,
-          input.articleId,
-          input.content
-        );
+    return implement(contract.comment.create).handler(({ context, input }) => {
+      const user = (context as { request?: { user?: { id: string } } }).request
+        ?.user;
+      if (!user) {
+        throw new UnauthorizedException("You must be logged in");
       }
-    );
+      return this.commentService.create(
+        user.id,
+        input.articleId,
+        input.content
+      );
+    });
   }
 
   @Implement(contract.comment.update)
   update() {
-    return implement(contract.comment.update).handler(
-      ({ context, input }) => {
-        const user = (context as { request?: { user?: { id: string } } })
-          .request?.user;
-        if (!user) {
-          throw new UnauthorizedException("You must be logged in");
-        }
-        return this.commentService.update(user.id, input.id, input.content);
+    return implement(contract.comment.update).handler(({ context, input }) => {
+      const user = (context as { request?: { user?: { id: string } } }).request
+        ?.user;
+      if (!user) {
+        throw new UnauthorizedException("You must be logged in");
       }
-    );
+      return this.commentService.update(user.id, input.id, input.content);
+    });
   }
 
   @Implement(contract.comment.delete)
   delete() {
-    return implement(contract.comment.delete).handler(
-      ({ context, input }) => {
-        const user = (context as { request?: { user?: { id: string } } })
-          .request?.user;
-        if (!user) {
-          throw new UnauthorizedException("You must be logged in");
-        }
-        return this.commentService.delete(user.id, input.id);
+    return implement(contract.comment.delete).handler(({ context, input }) => {
+      const user = (context as { request?: { user?: { id: string } } }).request
+        ?.user;
+      if (!user) {
+        throw new UnauthorizedException("You must be logged in");
       }
-    );
+      return this.commentService.delete(user.id, input.id);
+    });
   }
 }

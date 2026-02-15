@@ -28,11 +28,7 @@ export class CommentService {
     });
   }
 
-  async create(
-    userId: string,
-    articleId: string,
-    content: string
-  ) {
+  async create(userId: string, articleId: string, content: string) {
     const article = await this.databaseService.prisma.article.findUnique({
       where: { id: articleId },
     });

@@ -15,9 +15,9 @@ import { notifications } from "@mantine/notifications";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
+import { SignedIn } from "@/components/auth/signed-in";
 import { useAuthentication } from "@/utils/auth/hooks";
 import { orpc, queryClient } from "@/utils/orpc";
-import { SignedIn } from "@/components/auth/signed-in";
 
 export const Route = createFileRoute("/_app/article/$articleId")({
   component: RouteComponent,
@@ -155,9 +155,9 @@ function RouteComponent() {
       labels: { confirm: "Delete", cancel: "Cancel" },
       confirmProps: { color: "red" },
       onConfirm: () => {
-        (
-          deleteMutation.mutate as unknown as (input: { id: string }) => void
-        )({ id: articleId });
+        (deleteMutation.mutate as unknown as (input: { id: string }) => void)({
+          id: articleId,
+        });
       },
     });
   };
@@ -186,14 +186,14 @@ function RouteComponent() {
       children: (
         <Stack>
           <Textarea
+            defaultValue={currentContent}
+            minRows={3}
             ref={(el) => {
               editCommentContentRef.current = el;
             }}
-            defaultValue={currentContent}
-            minRows={3}
           />
           <Group justify="flex-end">
-            <Button variant="default" onClick={() => modals.closeAll()}>
+            <Button onClick={() => modals.closeAll()} variant="default">
               Cancel
             </Button>
             <Button
@@ -228,7 +228,9 @@ function RouteComponent() {
       confirmProps: { color: "red" },
       onConfirm: () => {
         (
-          deleteCommentMutation.mutate as unknown as (input: { id: string }) => void
+          deleteCommentMutation.mutate as unknown as (input: {
+            id: string;
+          }) => void
         )({ id });
       },
       onCancel: () => setDeletingCommentId(null),
@@ -305,7 +307,9 @@ function RouteComponent() {
               <Text fw={500} size="sm">
                 Created by:
               </Text>
-              <Text size="sm">{a.user?.name ?? a.user?.email ?? "Unknown"}</Text>
+              <Text size="sm">
+                {a.user?.name ?? a.user?.email ?? "Unknown"}
+              </Text>
             </Group>
           )}
 
@@ -333,7 +337,7 @@ function RouteComponent() {
         </Stack>
       </Card>
 
-      <Card padding="lg" radius="md" shadow="sm" withBorder mt="xl">
+      <Card mt="xl" padding="lg" radius="md" shadow="sm" withBorder>
         <Stack gap="md">
           <Title order={2}>Comments</Title>
           {commentsLoading ? (
@@ -343,17 +347,17 @@ function RouteComponent() {
               <SignedIn>
                 <Stack gap="xs">
                   <Textarea
-                    placeholder="Add a comment..."
                     minRows={3}
-                    value={newCommentContent}
                     onChange={(e) =>
                       setNewCommentContent(e.currentTarget.value)
                     }
+                    placeholder="Add a comment..."
+                    value={newCommentContent}
                   />
                   <Button
-                    onClick={handleAddComment}
-                    loading={createCommentMutation.isPending}
                     disabled={!newCommentContent.trim()}
+                    loading={createCommentMutation.isPending}
+                    onClick={handleAddComment}
                   >
                     Add comment
                   </Button>
@@ -370,16 +374,14 @@ function RouteComponent() {
                       isAuthenticated &&
                       userSession?.user?.id === comment.userId;
                     const authorName =
-                      comment.user?.name ??
-                      comment.user?.email ??
-                      "Unknown";
+                      comment.user?.name ?? comment.user?.email ?? "Unknown";
                     return (
                       <Card
                         key={comment.id}
                         padding="sm"
                         radius="md"
-                        withBorder
                         variant="light"
+                        withBorder
                       >
                         <Stack gap="xs">
                           <Group justify="space-between">
@@ -387,29 +389,25 @@ function RouteComponent() {
                               {authorName}
                             </Text>
                             <Text c="dimmed" size="xs">
-                              {new Date(
-                                comment.createdAt
-                              ).toLocaleDateString()}
+                              {new Date(comment.createdAt).toLocaleDateString()}
                             </Text>
                           </Group>
                           <Text size="sm">{comment.content}</Text>
                           {isCommentOwner && (
                             <Group gap="xs">
                               <Button
-                                size="xs"
-                                variant="light"
                                 onClick={() =>
                                   openEditCommentModal(
                                     comment.id,
                                     comment.content
                                   )
                                 }
+                                size="xs"
+                                variant="light"
                               >
                                 Edit
                               </Button>
                               <Button
-                                size="xs"
-                                variant="light"
                                 color="red"
                                 loading={
                                   deleteCommentMutation.isPending &&
@@ -418,6 +416,8 @@ function RouteComponent() {
                                 onClick={() =>
                                   openDeleteCommentConfirm(comment.id)
                                 }
+                                size="xs"
+                                variant="light"
                               >
                                 Delete
                               </Button>
