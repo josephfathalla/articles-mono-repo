@@ -15,7 +15,7 @@ export const getRouter = () => {
     context: { queryClient },
     Wrap: ({ children }) => (
       <QueryClientProvider client={queryClient}>
-        <MantineProvider theme={theme}>
+        <MantineProvider defaultColorScheme="auto" theme={theme}>
           <ModalsProvider>
             <Notifications />
             {children}
