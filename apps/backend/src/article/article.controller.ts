@@ -14,9 +14,24 @@ export class ArticleController {
   @AllowAnonymous()
   @Implement(contract.article.list)
   list() {
-    return implement(contract.article.list).handler(async () =>
-      this.articleService.listAll()
-    );
+    return implement(contract.article.list).handler(({ context, input }) => {
+      const user = (context as any).request?.user;
+      return this.articleService.listAll({
+        categoryIds: input.categoryIds,
+        options: { includeUser: !!user },
+      });
+    });
+  }
+
+  @AllowAnonymous()
+  @Implement(contract.article.getById)
+  getById() {
+    return implement(contract.article.getById).handler(({ context, input }) => {
+      const user = (context as any).request?.user;
+      return this.articleService.getById(input.articleId, {
+        includeUser: !!user,
+      });
+    });
   }
 
   @Implement(contract.article.listMy)
@@ -26,9 +41,11 @@ export class ArticleController {
       if (!user) {
         throw new UnauthorizedException("You must be logged in");
       }
+
       return this.articleService.listMy({
         userId: user.id,
         search: input.search,
+        categoryIds: input.categoryIds,
       });
     });
   }
@@ -53,6 +70,17 @@ export class ArticleController {
       }
       const { id, ...data } = input;
       return this.articleService.update(user.id, id, data);
+    });
+  }
+
+  @Implement(contract.article.delete)
+  delete() {
+    return implement(contract.article.delete).handler(({ context, input }) => {
+      const user = (context as any).request.user;
+      if (!user) {
+        throw new UnauthorizedException("You must be logged in");
+      }
+      return this.articleService.delete(input.id, user.id);
     });
   }
 }

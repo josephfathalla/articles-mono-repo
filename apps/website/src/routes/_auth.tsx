@@ -7,7 +7,6 @@ export const Route = createFileRoute("/_auth")({
 function RouteComponent() {
   return (
     <div>
-      Auth header goes here
       <Outlet />
     </div>
   );

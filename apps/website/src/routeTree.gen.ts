@@ -15,9 +15,13 @@ import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AuthSignupRouteImport } from './routes/_auth/signup'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as AppMyArticlesIndexRouteImport } from './routes/_app/my-articles/index'
+import { Route as AppCategoriesIndexRouteImport } from './routes/_app/categories/index'
 import { Route as AppArticlesIndexRouteImport } from './routes/_app/articles/index'
-import { Route as AppMyArticlesAddRouteImport } from './routes/_app/my-articles/add'
-import { Route as AppArticlesArticleIdRouteImport } from './routes/_app/articles/$articleId'
+import { Route as AppCategoriesAddRouteImport } from './routes/_app/categories/add'
+import { Route as AppCategoriesCategoryIdRouteImport } from './routes/_app/categories/$categoryId'
+import { Route as AppArticleAddRouteImport } from './routes/_app/article/add'
+import { Route as AppArticleArticleIdRouteImport } from './routes/_app/article/$articleId'
+import { Route as AppArticleArticleIdEditRouteImport } from './routes/_app/article/$articleId.edit'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
@@ -47,39 +51,67 @@ const AppMyArticlesIndexRoute = AppMyArticlesIndexRouteImport.update({
   path: '/my-articles/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCategoriesIndexRoute = AppCategoriesIndexRouteImport.update({
+  id: '/categories/',
+  path: '/categories/',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppArticlesIndexRoute = AppArticlesIndexRouteImport.update({
   id: '/articles/',
   path: '/articles/',
   getParentRoute: () => AppRoute,
 } as any)
-const AppMyArticlesAddRoute = AppMyArticlesAddRouteImport.update({
-  id: '/my-articles/add',
-  path: '/my-articles/add',
+const AppCategoriesAddRoute = AppCategoriesAddRouteImport.update({
+  id: '/categories/add',
+  path: '/categories/add',
   getParentRoute: () => AppRoute,
 } as any)
-const AppArticlesArticleIdRoute = AppArticlesArticleIdRouteImport.update({
-  id: '/articles/$articleId',
-  path: '/articles/$articleId',
+const AppCategoriesCategoryIdRoute = AppCategoriesCategoryIdRouteImport.update({
+  id: '/categories/$categoryId',
+  path: '/categories/$categoryId',
   getParentRoute: () => AppRoute,
+} as any)
+const AppArticleAddRoute = AppArticleAddRouteImport.update({
+  id: '/article/add',
+  path: '/article/add',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppArticleArticleIdRoute = AppArticleArticleIdRouteImport.update({
+  id: '/article/$articleId',
+  path: '/article/$articleId',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppArticleArticleIdEditRoute = AppArticleArticleIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => AppArticleArticleIdRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
   '/': typeof AppIndexRoute
-  '/articles/$articleId': typeof AppArticlesArticleIdRoute
-  '/my-articles/add': typeof AppMyArticlesAddRoute
+  '/article/$articleId': typeof AppArticleArticleIdRouteWithChildren
+  '/article/add': typeof AppArticleAddRoute
+  '/categories/$categoryId': typeof AppCategoriesCategoryIdRoute
+  '/categories/add': typeof AppCategoriesAddRoute
   '/articles': typeof AppArticlesIndexRoute
+  '/categories': typeof AppCategoriesIndexRoute
   '/my-articles': typeof AppMyArticlesIndexRoute
+  '/article/$articleId/edit': typeof AppArticleArticleIdEditRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
   '/': typeof AppIndexRoute
-  '/articles/$articleId': typeof AppArticlesArticleIdRoute
-  '/my-articles/add': typeof AppMyArticlesAddRoute
+  '/article/$articleId': typeof AppArticleArticleIdRouteWithChildren
+  '/article/add': typeof AppArticleAddRoute
+  '/categories/$categoryId': typeof AppCategoriesCategoryIdRoute
+  '/categories/add': typeof AppCategoriesAddRoute
   '/articles': typeof AppArticlesIndexRoute
+  '/categories': typeof AppCategoriesIndexRoute
   '/my-articles': typeof AppMyArticlesIndexRoute
+  '/article/$articleId/edit': typeof AppArticleArticleIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -88,10 +120,14 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/signup': typeof AuthSignupRoute
   '/_app/': typeof AppIndexRoute
-  '/_app/articles/$articleId': typeof AppArticlesArticleIdRoute
-  '/_app/my-articles/add': typeof AppMyArticlesAddRoute
+  '/_app/article/$articleId': typeof AppArticleArticleIdRouteWithChildren
+  '/_app/article/add': typeof AppArticleAddRoute
+  '/_app/categories/$categoryId': typeof AppCategoriesCategoryIdRoute
+  '/_app/categories/add': typeof AppCategoriesAddRoute
   '/_app/articles/': typeof AppArticlesIndexRoute
+  '/_app/categories/': typeof AppCategoriesIndexRoute
   '/_app/my-articles/': typeof AppMyArticlesIndexRoute
+  '/_app/article/$articleId/edit': typeof AppArticleArticleIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -99,19 +135,27 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/'
-    | '/articles/$articleId'
-    | '/my-articles/add'
+    | '/article/$articleId'
+    | '/article/add'
+    | '/categories/$categoryId'
+    | '/categories/add'
     | '/articles'
+    | '/categories'
     | '/my-articles'
+    | '/article/$articleId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
     | '/signup'
     | '/'
-    | '/articles/$articleId'
-    | '/my-articles/add'
+    | '/article/$articleId'
+    | '/article/add'
+    | '/categories/$categoryId'
+    | '/categories/add'
     | '/articles'
+    | '/categories'
     | '/my-articles'
+    | '/article/$articleId/edit'
   id:
     | '__root__'
     | '/_app'
@@ -119,10 +163,14 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/signup'
     | '/_app/'
-    | '/_app/articles/$articleId'
-    | '/_app/my-articles/add'
+    | '/_app/article/$articleId'
+    | '/_app/article/add'
+    | '/_app/categories/$categoryId'
+    | '/_app/categories/add'
     | '/_app/articles/'
+    | '/_app/categories/'
     | '/_app/my-articles/'
+    | '/_app/article/$articleId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -174,6 +222,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMyArticlesIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/categories/': {
+      id: '/_app/categories/'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof AppCategoriesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/articles/': {
       id: '/_app/articles/'
       path: '/articles'
@@ -181,36 +236,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppArticlesIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/my-articles/add': {
-      id: '/_app/my-articles/add'
-      path: '/my-articles/add'
-      fullPath: '/my-articles/add'
-      preLoaderRoute: typeof AppMyArticlesAddRouteImport
+    '/_app/categories/add': {
+      id: '/_app/categories/add'
+      path: '/categories/add'
+      fullPath: '/categories/add'
+      preLoaderRoute: typeof AppCategoriesAddRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/articles/$articleId': {
-      id: '/_app/articles/$articleId'
-      path: '/articles/$articleId'
-      fullPath: '/articles/$articleId'
-      preLoaderRoute: typeof AppArticlesArticleIdRouteImport
+    '/_app/categories/$categoryId': {
+      id: '/_app/categories/$categoryId'
+      path: '/categories/$categoryId'
+      fullPath: '/categories/$categoryId'
+      preLoaderRoute: typeof AppCategoriesCategoryIdRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/_app/article/add': {
+      id: '/_app/article/add'
+      path: '/article/add'
+      fullPath: '/article/add'
+      preLoaderRoute: typeof AppArticleAddRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/article/$articleId': {
+      id: '/_app/article/$articleId'
+      path: '/article/$articleId'
+      fullPath: '/article/$articleId'
+      preLoaderRoute: typeof AppArticleArticleIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/article/$articleId/edit': {
+      id: '/_app/article/$articleId/edit'
+      path: '/edit'
+      fullPath: '/article/$articleId/edit'
+      preLoaderRoute: typeof AppArticleArticleIdEditRouteImport
+      parentRoute: typeof AppArticleArticleIdRoute
     }
   }
 }
 
+interface AppArticleArticleIdRouteChildren {
+  AppArticleArticleIdEditRoute: typeof AppArticleArticleIdEditRoute
+}
+
+const AppArticleArticleIdRouteChildren: AppArticleArticleIdRouteChildren = {
+  AppArticleArticleIdEditRoute: AppArticleArticleIdEditRoute,
+}
+
+const AppArticleArticleIdRouteWithChildren =
+  AppArticleArticleIdRoute._addFileChildren(AppArticleArticleIdRouteChildren)
+
 interface AppRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
-  AppArticlesArticleIdRoute: typeof AppArticlesArticleIdRoute
-  AppMyArticlesAddRoute: typeof AppMyArticlesAddRoute
+  AppArticleArticleIdRoute: typeof AppArticleArticleIdRouteWithChildren
+  AppArticleAddRoute: typeof AppArticleAddRoute
+  AppCategoriesCategoryIdRoute: typeof AppCategoriesCategoryIdRoute
+  AppCategoriesAddRoute: typeof AppCategoriesAddRoute
   AppArticlesIndexRoute: typeof AppArticlesIndexRoute
+  AppCategoriesIndexRoute: typeof AppCategoriesIndexRoute
   AppMyArticlesIndexRoute: typeof AppMyArticlesIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppIndexRoute: AppIndexRoute,
-  AppArticlesArticleIdRoute: AppArticlesArticleIdRoute,
-  AppMyArticlesAddRoute: AppMyArticlesAddRoute,
+  AppArticleArticleIdRoute: AppArticleArticleIdRouteWithChildren,
+  AppArticleAddRoute: AppArticleAddRoute,
+  AppCategoriesCategoryIdRoute: AppCategoriesCategoryIdRoute,
+  AppCategoriesAddRoute: AppCategoriesAddRoute,
   AppArticlesIndexRoute: AppArticlesIndexRoute,
+  AppCategoriesIndexRoute: AppCategoriesIndexRoute,
   AppMyArticlesIndexRoute: AppMyArticlesIndexRoute,
 }
 

@@ -1,18 +1,11 @@
-import { Badge, Button, Flex, Group, TextInput, Title } from "@mantine/core";
-import { DatePickerInput } from "@mantine/dates";
+import { Button, Flex, Group, Title } from "@mantine/core";
 import type { contract } from "@my-better-t-app/contracts";
 import type { InferContractRouterOutputs } from "@orpc/contract";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  MantineReactTable,
-  type MRT_Cell,
-  type MRT_ColumnDef,
-  useMantineReactTable,
-} from "mantine-react-table-open";
-import { useMemo } from "react";
 import { useTableSearchParams } from "tanstack-table-search-params";
 import { z } from "zod";
+import { ArticlesList } from "@/components/article/ArticlesList";
 import { orpc } from "@/utils/orpc";
 
 type Outputs = InferContractRouterOutputs<typeof contract.article.listMy>;
@@ -35,12 +28,6 @@ const fieldsTypesMapping = {
 
 const orders = ["asc", "desc"] as const;
 
-const StatusCell = ({ cell }: { cell: MRT_Cell<MyArticlesOutput> }) => (
-  <Badge color={cell.getValue() === "true" ? "green" : "gray"}>
-    {cell.getValue() === "true" ? "Published" : "Draft"}
-  </Badge>
-);
-
 export const Route = createFileRoute("/_app/my-articles/")({
   component: RouteComponent,
   validateSearch: z.object({
@@ -56,7 +43,6 @@ export const Route = createFileRoute("/_app/my-articles/")({
 function RouteComponent() {
   const navigate = Route.useNavigate();
   const query = Route.useSearch();
-
   const stateAndOnChanges = useTableSearchParams(
     {
       replace: (url) => {
@@ -81,6 +67,27 @@ function RouteComponent() {
     }
   );
 
+  const categories = useQuery(
+    orpc.category.list.queryOptions({
+      input: {
+        page: "1",
+        limit: "1000",
+        select: "all",
+        sort: { field: "name", criteria: "asc" },
+      },
+    })
+  );
+
+  const categoryOptions =
+    categories.data?.data.map((cat) => ({
+      value: cat.id,
+      label: cat.name,
+    })) ?? [];
+
+  const selectedCategoryIds =
+    (stateAndOnChanges.state?.columnFilters?.find((f) => f.id === "categories")
+      ?.value as string[]) ?? [];
+
   const articles = useQuery(
     orpc.article.listMy.queryOptions({
       input: {
@@ -95,28 +102,30 @@ function RouteComponent() {
             ? "desc"
             : "asc",
         },
+        categoryIds:
+          selectedCategoryIds.length > 0 ? selectedCategoryIds : undefined,
         filter: stateAndOnChanges.state?.columnFilters
-          ?.filter((filter) => filter.value !== "")
+          ?.filter((filter) => {
+            // Skip categories filter as it's handled separately
+            if (filter.id === "categories") return false;
+            // Skip empty values
+            if (Array.isArray(filter.value)) {
+              return filter.value.length > 0;
+            }
+            return filter.value != null && filter.value !== "";
+          })
           .flatMap((filter) => {
             const type =
               fieldsTypesMapping[
                 filter.id as keyof typeof fieldsTypesMapping
               ] ?? "string";
+
             if (type === "string") {
               return [
                 {
                   path: filter.id,
                   type: "string",
                   operator: "contains",
-                  value: filter.value,
-                },
-              ];
-            }
-            if (type === "boolean") {
-              return [
-                {
-                  path: filter.id,
-                  type: "boolean",
                   value: filter.value,
                 },
               ];
@@ -156,93 +165,34 @@ function RouteComponent() {
     })
   );
 
-  const columns = useMemo<MRT_ColumnDef<MyArticlesOutput>[]>(
-    () => [
-      { accessorKey: "title", header: "Title" },
-      {
-        accessorKey: "description",
-        header: "Description",
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "isPublished",
-        header: "Status",
-        filterVariant: "checkbox",
-        accessorFn: (row) => (row.isPublished ? "true" : "false"),
-        id: "isPublished",
-        Cell: StatusCell,
-      },
-      {
-        accessorKey: "createdAt",
-        header: "Created At",
-        filterVariant: "date-range",
-      },
-      {
-        accessorKey: "updatedAt",
-        header: "Updated At",
-        filterVariant: "date-range",
-      },
-    ],
-    []
-  );
-
-  const table = useMantineReactTable({
-    data: articles.data?.data ?? [],
-    columns,
-    ...stateAndOnChanges,
-    initialState: {
-      showGlobalFilter: true,
-      density: "xs",
-    },
-    state: {
-      ...stateAndOnChanges.state,
-      isLoading: articles.isLoading,
-    },
-    // paginationDisplayMode: "",
-    manualFiltering: true,
-    manualPagination: true,
-    manualSorting: true,
-    rowCount: articles.data?.meta.pagination.total ?? 0,
-    enableRowSelection: true,
-    // enableRowActions: true,
-  });
+  const handleRowClick = (article: MyArticlesOutput) => {
+    navigate({ to: "/article/$articleId", params: { articleId: article.id } });
+  };
 
   return (
     <Flex direction="column" py="xl">
       <Group justify="space-between" mb="md">
         <Title>My Articles</Title>
-        <Button
-          renderRoot={(props) => <Link to="/my-articles/add" {...props} />}
-        >
+        <Button renderRoot={(props) => <Link to="/article/add" {...props} />}>
           Create Article
         </Button>
       </Group>
-      <Group mb={10}>
-        <TextInput
-          onChange={(e) =>
-            table.getColumn("description").setFilterValue(e.currentTarget.value)
-          }
-          placeholder="Filter description"
-          value={
-            (table.getColumn("description").getFilterValue() as string) ?? ""
-          }
-        />
-        <DatePickerInput
-          clearable
-          onChange={(value) =>
-            table.getColumn("createdAt").setFilterValue(value)
-          }
-          placeholder="Filter created at"
-          type="range"
-          value={
-            (table.getColumn("createdAt").getFilterValue() as [
-              Date | null,
-              Date | null,
-            ]) ?? [null, null]
-          }
-        />
-      </Group>
-      <MantineReactTable table={table} />
+      <ArticlesList
+        categoryOptions={categoryOptions}
+        data={articles.data?.data ?? []}
+        isLoading={articles.isLoading}
+        onRowClick={handleRowClick}
+        onTableStateChange={{
+          onGlobalFilterChange: stateAndOnChanges.onGlobalFilterChange,
+          onPaginationChange: stateAndOnChanges.onPaginationChange,
+          onSortingChange: stateAndOnChanges.onSortingChange,
+          onColumnFiltersChange: stateAndOnChanges.onColumnFiltersChange,
+        }}
+        rowCount={articles.data?.meta.pagination.total ?? 0}
+        selectedCategoryIds={selectedCategoryIds}
+        showAuthor={false}
+        tableState={stateAndOnChanges.state}
+      />
     </Flex>
   );
 }

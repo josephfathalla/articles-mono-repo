@@ -1,34 +1,201 @@
+import { Button, Flex, Group, Title } from "@mantine/core";
+import type { contract } from "@my-better-t-app/contracts";
+import type { InferContractRouterOutputs } from "@orpc/contract";
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useTableSearchParams } from "tanstack-table-search-params";
+import { z } from "zod";
+import { ArticlesList } from "@/components/article/ArticlesList";
+import { SignedIn } from "@/components/auth/signed-in";
+import { useAuthentication } from "@/utils/auth/hooks";
 import { orpc } from "@/utils/orpc";
+
+type Outputs = InferContractRouterOutputs<typeof contract.article.list>;
+type ArticlesOutput = Outputs["data"][number];
+const fields = [
+  "title",
+  "description",
+  "createdAt",
+  "isPublished",
+] as const satisfies Partial<keyof ArticlesOutput>[];
+
+const fieldsTypesMapping = {
+  title: "string",
+  description: "string",
+  createdAt: "date",
+  isPublished: "boolean",
+};
+
+const orders = ["asc", "desc"] as const;
 
 export const Route = createFileRoute("/_app/articles/")({
   component: RouteComponent,
+  validateSearch: z.object({
+    search: z.string().optional(),
+    page: z.string().default("1"),
+    limit: z.string().default("10"),
+    sort: z
+      .enum([...fields.flatMap((f) => orders.map((o) => `${f}.${o}` as const))])
+      .default("createdAt.desc"),
+  }),
 });
 
 function RouteComponent() {
-  const articles = useQuery(
-    orpc.article.list.queryOptions({
+  const navigate = Route.useNavigate();
+  const query = Route.useSearch();
+  const { isAuthenticated } = useAuthentication();
+  const stateAndOnChanges = useTableSearchParams(
+    {
+      replace: (url) => {
+        const searchParams = new URLSearchParams(url.split("?")[1]);
+        navigate({
+          search: Object.fromEntries(searchParams.entries()),
+          replace: true,
+        });
+      },
+      query,
+      pathname: Route.path,
+    },
+    {
+      paramNames: {
+        globalFilter: "search",
+        sorting: "sort",
+        pagination: {
+          pageIndex: "page",
+          pageSize: "limit",
+        },
+      },
+    }
+  );
+
+  const categories = useQuery(
+    orpc.category.list.queryOptions({
       input: {
         page: "1",
-        limit: "10",
+        limit: "1000",
         select: "all",
-        sort: { field: "title", criteria: "asc" },
-        filter: [{ path: "title", operator: "contains", value: "awd" }],
-        populate: [{ path: "user", select: "name" }],
+        sort: { field: "name", criteria: "asc" },
       },
     })
   );
 
+  const categoryOptions =
+    categories.data?.data.map((cat) => ({
+      value: cat.id,
+      label: cat.name,
+    })) ?? [];
+
+  const selectedCategoryIds =
+    (stateAndOnChanges.state?.columnFilters?.find((f) => f.id === "categories")
+      ?.value as string[]) ?? [];
+
+  const articles = useQuery(
+    orpc.article.list.queryOptions({
+      input: {
+        search: stateAndOnChanges.state?.globalFilter ?? "",
+        page: `${(stateAndOnChanges.state?.pagination?.pageIndex || 0) + 1}`,
+        limit: `${stateAndOnChanges.state?.pagination?.pageSize || 10}`,
+        select: "all",
+        sort: {
+          field: (stateAndOnChanges?.state?.sorting?.[0]?.id ??
+            "createdAt") as (typeof fields)[number],
+          criteria: stateAndOnChanges?.state?.sorting?.[0]?.desc
+            ? "desc"
+            : "asc",
+        },
+        categoryIds:
+          selectedCategoryIds.length > 0 ? selectedCategoryIds : undefined,
+        filter: stateAndOnChanges.state?.columnFilters
+          ?.filter((filter) => {
+            // Skip categories filter as it's handled separately
+            if (filter.id === "categories") return false;
+            // Skip empty values
+            if (Array.isArray(filter.value)) {
+              return filter.value.length > 0;
+            }
+            return filter.value != null && filter.value !== "";
+          })
+          .flatMap((filter) => {
+            const type =
+              fieldsTypesMapping[
+                filter.id as keyof typeof fieldsTypesMapping
+              ] ?? "string";
+
+            if (type === "string") {
+              return [
+                {
+                  path: filter.id,
+                  type: "string",
+                  operator: "contains",
+                  value: filter.value,
+                },
+              ];
+            }
+            if (type === "date") {
+              const filterReturn = [];
+              if (filter.value[0]) {
+                filterReturn.push({
+                  path: filter.id,
+                  type: "date",
+                  value: filter.value[0],
+                  operator: "gte",
+                  filterGroup: "and",
+                });
+              }
+              if (filter.value[1]) {
+                filterReturn.push({
+                  path: filter.id,
+                  type: "date",
+                  value: filter.value[1],
+                  operator: "lte",
+                  filterGroup: "and",
+                });
+              }
+
+              return filterReturn;
+            }
+
+            //Default to string
+            return {
+              path: filter.id,
+              type: "string",
+              value: filter.value,
+            };
+          }),
+      },
+    })
+  );
+
+  const handleRowClick = (article: ArticlesOutput) => {
+    navigate({ to: "/article/$articleId", params: { articleId: article.id } });
+  };
+
   return (
-    <div>
-      Hello "/articles/ "
-      {articles.data?.data.map((article) => (
-        <div key={article.id}>
-          {article.title} - {article.description} - {article.user?.name}
-          {JSON.stringify(article)}
-        </div>
-      ))}
-    </div>
+    <Flex direction="column" py="xl">
+      <Group justify="space-between" mb="md">
+        <Title>Articles</Title>
+        <SignedIn>
+          <Button renderRoot={(props) => <Link to="/article/add" {...props} />}>
+            Create Article
+          </Button>
+        </SignedIn>
+      </Group>
+      <ArticlesList
+        categoryOptions={categoryOptions}
+        data={articles.data?.data ?? []}
+        isLoading={articles.isLoading}
+        onRowClick={handleRowClick}
+        onTableStateChange={{
+          onGlobalFilterChange: stateAndOnChanges.onGlobalFilterChange,
+          onPaginationChange: stateAndOnChanges.onPaginationChange,
+          onSortingChange: stateAndOnChanges.onSortingChange,
+          onColumnFiltersChange: stateAndOnChanges.onColumnFiltersChange,
+        }}
+        rowCount={articles.data?.meta.pagination.total ?? 0}
+        selectedCategoryIds={selectedCategoryIds}
+        showAuthor={isAuthenticated}
+        tableState={stateAndOnChanges.state}
+      />
+    </Flex>
   );
 }

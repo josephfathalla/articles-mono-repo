@@ -15,6 +15,7 @@
     "@mantine/dates": "^8.3.9",
     "@mantine/form": "^8.3.9",
     "@mantine/hooks": "^8.3.9",
+    "@mantine/modals": "^8.3.14",
     "@mantine/notifications": "^8.3.9",
     "@my-better-t-app/auth": "workspace:*",
     "@my-better-t-app/contracts": "workspace:*",

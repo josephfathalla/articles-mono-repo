@@ -30,6 +30,18 @@ function RouteComponent() {
           <Group justify="space-between" style={{ flex: 1 }}>
             <Link to="/">Determinds</Link>
             <Group gap={0} ml="xl" visibleFrom="sm">
+              <UnstyledButton
+                className={classes.control}
+                renderRoot={(props) => <Link to="/articles" {...props} />}
+              >
+                Articles
+              </UnstyledButton>
+              <UnstyledButton
+                className={classes.control}
+                renderRoot={(props) => <Link to="/categories" {...props} />}
+              >
+                Categories
+              </UnstyledButton>
               <SignedOut>
                 <UnstyledButton
                   className={classes.control}
@@ -66,6 +78,18 @@ function RouteComponent() {
       </AppShell.Header>
 
       <AppShell.Navbar px={4} py="md">
+        <UnstyledButton
+          className={classes.control}
+          renderRoot={(props) => <Link to="/articles" {...props} />}
+        >
+          Articles
+        </UnstyledButton>
+        <UnstyledButton
+          className={classes.control}
+          renderRoot={(props) => <Link to="/categories" {...props} />}
+        >
+          Categories
+        </UnstyledButton>
         <SignedOut>
           <UnstyledButton
             className={classes.control}
