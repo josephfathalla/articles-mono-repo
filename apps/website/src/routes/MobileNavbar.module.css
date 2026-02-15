@@ -4,6 +4,7 @@
   border-radius: var(--mantine-radius-md);
   font-weight: 500;
 
+  /* biome-ignore lint/suspicious/noUnknownAtRules: Mantine/PostCSS mixin */
   @mixin hover {
     background-color: light-dark(
       var(--mantine-color-gray-0),

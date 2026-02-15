@@ -4,6 +4,8 @@ import { Implement, implement } from "@orpc/nest";
 import { AllowAnonymous } from "@thallesp/nestjs-better-auth";
 import { ArticleService } from "./article.service";
 
+type RequestContext = { request?: { user?: { id: string } } };
+
 @Controller()
 export class ArticleController {
   private readonly articleService: ArticleService;
@@ -15,7 +17,7 @@ export class ArticleController {
   @Implement(contract.article.list)
   list() {
     return implement(contract.article.list).handler(({ context, input }) => {
-      const user = (context as any).request?.user;
+      const user = (context as RequestContext).request?.user;
       return this.articleService.listAll({
         categoryIds: input.categoryIds,
         options: { includeUser: !!user },
@@ -27,7 +29,7 @@ export class ArticleController {
   @Implement(contract.article.getById)
   getById() {
     return implement(contract.article.getById).handler(({ context, input }) => {
-      const user = (context as any).request?.user;
+      const user = (context as RequestContext).request?.user;
       return this.articleService.getById(input.articleId, {
         includeUser: !!user,
       });
@@ -37,7 +39,7 @@ export class ArticleController {
   @Implement(contract.article.listMy)
   listMy() {
     return implement(contract.article.listMy).handler(({ context, input }) => {
-      const user = (context as any).request.user;
+      const user = (context as RequestContext).request?.user;
       if (!user) {
         throw new UnauthorizedException("You must be logged in");
       }
@@ -53,7 +55,7 @@ export class ArticleController {
   @Implement(contract.article.create)
   create() {
     return implement(contract.article.create).handler(({ context, input }) => {
-      const user = (context as any).request.user;
+      const user = (context as RequestContext).request?.user;
       if (!user) {
         throw new UnauthorizedException("You must be logged in");
       }
@@ -64,7 +66,7 @@ export class ArticleController {
   @Implement(contract.article.update)
   update() {
     return implement(contract.article.update).handler(({ context, input }) => {
-      const user = (context as any).request.user;
+      const user = (context as RequestContext).request?.user;
       if (!user) {
         throw new UnauthorizedException("You must be logged in");
       }
@@ -76,7 +78,7 @@ export class ArticleController {
   @Implement(contract.article.delete)
   delete() {
     return implement(contract.article.delete).handler(({ context, input }) => {
-      const user = (context as any).request.user;
+      const user = (context as RequestContext).request?.user;
       if (!user) {
         throw new UnauthorizedException("You must be logged in");
       }

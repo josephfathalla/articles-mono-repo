@@ -2,6 +2,7 @@ import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../prisma/generated/client";
 
+// biome-ignore lint/performance/noBarrelFile: intentional barrel for Prisma client re-export
 export * from "../prisma/generated/client";
 
 const connectionString = `${process.env.DATABASE_URL}`;

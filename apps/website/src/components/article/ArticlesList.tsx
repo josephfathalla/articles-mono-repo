@@ -10,7 +10,7 @@ import {
 } from "mantine-react-table-open";
 import { useMemo } from "react";
 
-interface Article {
+type Article = {
   id: string;
   title?: string;
   description?: string;
@@ -27,9 +27,9 @@ interface Article {
     name: string;
     type: "long" | "short";
   }>;
-}
+};
 
-interface ArticlesListProps {
+type ArticlesListProps = {
   data: Article[];
   isLoading: boolean;
   rowCount: number;
@@ -44,7 +44,7 @@ interface ArticlesListProps {
   };
   categoryOptions: Array<{ value: string; label: string }>;
   selectedCategoryIds: string[];
-}
+};
 
 const StatusCell = ({ cell }: { cell: MRT_Cell<Article> }) => (
   <Badge color={cell.getValue() === "true" ? "green" : "gray"}>

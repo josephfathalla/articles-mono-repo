@@ -108,7 +108,9 @@ function RouteComponent() {
         filter: stateAndOnChanges.state?.columnFilters
           ?.filter((filter) => {
             // Skip categories filter as it's handled separately
-            if (filter.id === "categories") return false;
+            if (filter.id === "categories") {
+              return false;
+            }
             // Skip empty values
             if (Array.isArray(filter.value)) {
               return filter.value.length > 0;
@@ -132,7 +134,13 @@ function RouteComponent() {
               ];
             }
             if (type === "date") {
-              const filterReturn = [];
+              const filterReturn: Array<{
+                path: string;
+                type: string;
+                value: unknown;
+                operator?: string;
+                filterGroup?: string;
+              }> = [];
               if (filter.value[0]) {
                 filterReturn.push({
                   path: filter.id,

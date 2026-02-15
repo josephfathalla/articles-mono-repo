@@ -54,6 +54,23 @@
           "test"
         ]
       }
+    },
+    {
+      "includes": [
+        "**/Header.tsx",
+        "**/ArticleForm.tsx",
+        "**/ArticlesList.tsx",
+        "**/CategoryForm.tsx",
+        "apps/website/src/routes/**/*.tsx",
+        "packages/contracts/src/interfaces/*.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": "off"
+          }
+        }
+      }
     }
   ],
   "extends": ["ultracite/core", "ultracite/react"]

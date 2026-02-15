@@ -4,6 +4,8 @@ import { Implement, implement } from "@orpc/nest";
 import { AllowAnonymous } from "@thallesp/nestjs-better-auth";
 import { CategoryService } from "./category.service";
 
+type RequestContext = { request?: { user?: { id: string } } };
+
 @Controller()
 export class CategoryController {
   private readonly categoryService: CategoryService;
@@ -29,7 +31,7 @@ export class CategoryController {
   @Implement(contract.category.create)
   create() {
     return implement(contract.category.create).handler(({ context, input }) => {
-      const user = (context as any).request.user;
+      const user = (context as RequestContext).request?.user;
       if (!user) {
         throw new UnauthorizedException("You must be logged in");
       }
@@ -40,7 +42,7 @@ export class CategoryController {
   @Implement(contract.category.update)
   update() {
     return implement(contract.category.update).handler(({ context, input }) => {
-      const user = (context as any).request.user;
+      const user = (context as RequestContext).request?.user;
       if (!user) {
         throw new UnauthorizedException("You must be logged in");
       }
@@ -52,7 +54,7 @@ export class CategoryController {
   @Implement(contract.category.delete)
   delete() {
     return implement(contract.category.delete).handler(({ context, input }) => {
-      const user = (context as any).request.user;
+      const user = (context as RequestContext).request?.user;
       if (!user) {
         throw new UnauthorizedException("You must be logged in");
       }

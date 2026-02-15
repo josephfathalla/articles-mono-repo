@@ -19,10 +19,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   MantineReactTable,
   type MRT_ColumnDef,
-  type MRT_Row,
   useMantineReactTable,
 } from "mantine-react-table-open";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useTableSearchParams } from "tanstack-table-search-params";
 import { z } from "zod";
 import { SignedIn } from "@/components/auth/signed-in";
@@ -61,10 +60,12 @@ function RouteComponent() {
   const queryClient = useQueryClient();
   const { isAuthenticated } = useAuthentication();
 
-  const statusCell: MRT_ColumnDef<CategoriesOutput>["Cell"] = ({ cell }) => {
+  const statusCell = useCallback<
+    NonNullable<MRT_ColumnDef<CategoriesOutput>["Cell"]>
+  >(({ cell }) => {
     const value = (cell.getValue<string>() || "") as string;
     return <Badge color={value === "Long" ? "red" : "green"}>{value}</Badge>;
-  };
+  }, []);
 
   const stateAndOnChanges = useTableSearchParams(
     {
@@ -146,7 +147,13 @@ function RouteComponent() {
 
             if (type === "date") {
               const [start, end] = filter.value as [Date | null, Date | null];
-              const filterReturn: any[] = [];
+              const filterReturn: Array<{
+                path: string;
+                type: string;
+                value: Date;
+                operator: string;
+                filterGroup?: string;
+              }> = [];
               if (start) {
                 filterReturn.push({
                   path: filter.id,
@@ -178,9 +185,12 @@ function RouteComponent() {
     })
   );
 
-  const handleEdit = (row: MRT_Row<CategoriesOutput>) => {
-    navigate({ to: `/categories/${row.id}` });
-  };
+  const handleEdit = useCallback(
+    (row: CategoriesOutput) => {
+      navigate({ to: `/categories/${row.id}` });
+    },
+    [navigate]
+  );
 
   const deleteMutation = useMutation(
     orpc.category.delete.mutationOptions({
@@ -204,35 +214,43 @@ function RouteComponent() {
     })
   );
 
-  const handleDelete = (row: CategoriesOutput) => {
-    modals.openConfirmModal({
-      title: "Delete Category",
-      children: `Are you sure you want to delete "${row.name}"? This action cannot be undone.`,
-      labels: { confirm: "Delete", cancel: "Cancel" },
-      confirmProps: { color: "red" },
-      onConfirm: () => {
-        deleteMutation.mutate({ id: row.id });
-      },
-    });
-  };
-
-  const actionCell: MRT_ColumnDef<CategoriesOutput>["Cell"] = ({ row }) => (
-    <Menu>
-      <Menu.Target>
-        <ActionIcon variant="subtle">⋮</ActionIcon>
-      </Menu.Target>
-      <Menu.Dropdown>
-        <Menu.Item onClick={() => handleEdit(row.original)}>Edit</Menu.Item>
-        <Menu.Item color="red" onClick={() => handleDelete(row.original)}>
-          Delete
-        </Menu.Item>
-      </Menu.Dropdown>
-    </Menu>
+  const handleDelete = useCallback(
+    (row: CategoriesOutput) => {
+      modals.openConfirmModal({
+        title: "Delete Category",
+        children: `Are you sure you want to delete "${row.name}"? This action cannot be undone.`,
+        labels: { confirm: "Delete", cancel: "Cancel" },
+        confirmProps: { color: "red" },
+        onConfirm: () => {
+          deleteMutation.mutate({ id: row.id });
+        },
+      });
+    },
+    [deleteMutation]
   );
 
-  const createdByCell: MRT_ColumnDef<CategoriesOutput>["Cell"] = ({ row }) => (
-    <Text>{row.original.createdByUser?.name}</Text>
+  const actionCell = useCallback<
+    NonNullable<MRT_ColumnDef<CategoriesOutput>["Cell"]>
+  >(
+    ({ row }) => (
+      <Menu>
+        <Menu.Target>
+          <ActionIcon variant="subtle">⋮</ActionIcon>
+        </Menu.Target>
+        <Menu.Dropdown>
+          <Menu.Item onClick={() => handleEdit(row.original)}>Edit</Menu.Item>
+          <Menu.Item color="red" onClick={() => handleDelete(row.original)}>
+            Delete
+          </Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
+    ),
+    [handleEdit, handleDelete]
   );
+
+  const createdByCell = useCallback<
+    NonNullable<MRT_ColumnDef<CategoriesOutput>["Cell"]>
+  >(({ row }) => <Text>{row.original.createdByUser?.name}</Text>, []);
 
   const columns = useMemo<MRT_ColumnDef<CategoriesOutput>[]>(
     () => [
@@ -273,7 +291,7 @@ function RouteComponent() {
           ]
         : []),
     ],
-    []
+    [actionCell, createdByCell, isAuthenticated, statusCell]
   );
 
   const table = useMantineReactTable({

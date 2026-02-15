@@ -197,7 +197,7 @@ export class ArticleService {
         ...(categoryIds !== undefined && {
           categories: {
             set: [], // First disconnect all
-            connect: categoryIds.map((id) => ({ id })), // Then connect new ones
+            connect: categoryIds.map((categoryId) => ({ id: categoryId })), // Then connect new ones
           },
         }),
       },
