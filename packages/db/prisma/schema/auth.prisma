@@ -10,6 +10,7 @@ model User {
   accounts      Account[]
   articles      Article[]
   categories    Category[]
+  comments      Comment[]
 
   @@unique([email])
   @@map("user")

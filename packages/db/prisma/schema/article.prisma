@@ -8,6 +8,7 @@ model Article {
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   categories  Category[]
+  comments    Comment[]
 
   @@map("article")
 }
