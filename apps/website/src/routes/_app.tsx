@@ -13,7 +13,7 @@ import { IconMoon, IconSun } from "@tabler/icons-react";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { SignedIn } from "@/components/auth/signed-in";
 import { SignedOut } from "@/components/auth/signed-out";
-import { UserMenu } from "@/components/auth/UserMenu";
+import { UserMenu } from "@/components/auth/user-menu";
 import classes from "./MobileNavbar.module.css";
 
 export const Route = createFileRoute("/_app")({

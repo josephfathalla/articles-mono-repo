@@ -20,7 +20,7 @@ export function UserMenu() {
         .join("")
         .toUpperCase()
         .slice(0, 2)
-    : user.email?.[0]?.toUpperCase() ?? "U";
+    : (user.email?.[0]?.toUpperCase() ?? "U");
 
   return (
     <Menu position="bottom-end" shadow="md" width={220}>
@@ -39,11 +39,11 @@ export function UserMenu() {
       </Menu.Target>
       <Menu.Dropdown>
         <Menu.Label>
-          <Text size="sm" fw={600} lineClamp={1}>
+          <Text fw={600} lineClamp={1} size="sm">
             {displayName}
           </Text>
           {user.email && (
-            <Text size="xs" c="dimmed" lineClamp={1} mt={2}>
+            <Text c="dimmed" lineClamp={1} mt={2} size="xs">
               {user.email}
             </Text>
           )}
